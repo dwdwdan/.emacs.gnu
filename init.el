@@ -25,7 +25,15 @@
 (setq straight-use-package-by-default t)
 
 (use-package evil
-  :config (evil-mode 1))
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1))
+
+(use-package evil-collection
+  :after evil
+  :init (evil-collection-init))
 
 (use-package helm
   :bind
