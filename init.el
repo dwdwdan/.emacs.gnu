@@ -26,6 +26,14 @@
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
+(use-package general
+  :config
+    (general-create-definer my/leader
+      :keymaps '(normal insert visual emacs)
+      :prefix "SPC"
+      :global-prefix "C-SPC"))
+
+
 (use-package evil
   :init
   (setq evil-want-integration t)
@@ -38,12 +46,18 @@
   :init (evil-collection-init))
 
 (use-package helm
-  :bind
-  ("M-x" . helm-M-x)
-  ("C-x C-f" . helm-find-files)
+  :general
+  ("M-x" 'helm-M-x)
+  ("C-x C-f" 'helm-find-files)
+  (my/leader
+    "." '(helm-find-files :which-key "Find Files")
+    "f" '(helm-find-files :which-key "Find Files"))
   :config (helm-mode 1))
 
-(use-package magit)
+(use-package magit
+  :general
+  (my/leader
+    "g" '(magit :which-key "Magit")))
 
 (use-package which-key
   :config (which-key-mode 1))
