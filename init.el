@@ -46,7 +46,6 @@
 (use-package magit)
 
 (use-package which-key
-  :init (which-key-setup-side-window-right-bottom)
   :config (which-key-mode 1))
 
 (use-package doom-themes
