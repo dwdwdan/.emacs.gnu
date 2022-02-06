@@ -76,3 +76,20 @@
 
 (use-package org
   :straight (:type built-in))
+
+(use-package projectile
+  :init
+  (projectile-mode 1)
+  :general
+  ("C-c p" 'projectile-command-map)
+  (my/leader
+    "p" '(:ignore t :which-key "Projectile")
+    "p p" '(projectile-switch-project :which-key "Switch Project")
+    "p !" '(projectile-run-shell-command-in-root :which-key "Project Shell Command")
+    "p f" '(projectile-find-file :which-key "Find File")
+    "SPC" '(projectile-find-file :which-key "Projectile Find File"))
+  :custom
+  (projectile-project-search-path '("~/repos")))
+
+(use-package helm-projectile
+  :after projectile)
