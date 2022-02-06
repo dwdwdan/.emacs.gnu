@@ -4,7 +4,7 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-
+(setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
 (set-face-attribute 'default nil :font "Jetbrainsmono-12")
 
