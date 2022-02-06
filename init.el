@@ -3,8 +3,11 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+
+
 (global-display-line-numbers-mode 1)
 (load-theme 'modus-vivendi t)
+(set-face-attribute 'default nil :font "Jetbrainsmono-12")
 
 ;; Straight.el Bootstrap
 (defvar bootstrap-version)
