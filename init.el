@@ -53,3 +53,10 @@
   :config
   (load-theme 'doom-gruvbox t)
   (doom-themes-org-config))
+
+(use-package doom-modeline
+  :init
+  (doom-modeline-mode 1)
+  :custom
+  (doom-modeline-buffer-encoding nil)
+  (doom-modeline-indent-info t))
