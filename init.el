@@ -73,3 +73,6 @@
   :custom
   (doom-modeline-buffer-encoding nil)
   (doom-modeline-indent-info t))
+
+(use-package org
+  :straight (:type built-in))
