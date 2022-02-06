@@ -6,7 +6,6 @@
 
 
 (global-display-line-numbers-mode 1)
-(load-theme 'modus-vivendi t)
 (set-face-attribute 'default nil :font "Jetbrainsmono-12")
 
 ;; Straight.el Bootstrap
@@ -49,3 +48,8 @@
 (use-package which-key
   :init (which-key-setup-side-window-right-bottom)
   :config (which-key-mode 1))
+
+(use-package doom-themes
+  :config
+  (load-theme 'doom-gruvbox t)
+  (doom-themes-org-config))
