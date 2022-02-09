@@ -7,6 +7,14 @@
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
 (set-face-attribute 'default nil :font "Jetbrainsmono-12")
+(cond ((eq system-type 'windows-nt)
+       (setq sync-dir "C:/Users/Daniel Walters/Dropbox")
+       ;; Windows-specific code goes here.
+       )
+      ((eq system-type 'gnu/linux)
+       (setq sync-dir "~/Nextcloud")
+       ;; Linux-specific code goes here.
+       ))
 
 ;; Straight.el Bootstrap
 (defvar bootstrap-version)
@@ -74,8 +82,6 @@
   (doom-modeline-buffer-encoding nil)
   (doom-modeline-indent-info t))
 
-(use-package org
-  :straight (:type built-in))
 
 (use-package projectile
   :init
@@ -115,3 +121,56 @@
 
   "b" '(:ignore t :which-key "Buffer")
   "b b" '(switch-to-buffer :which-key "Switch Buffer"))
+(setq org-directory (concat sync-dir "/Org")
+      org-roam-directory (concat sync-dir "/OrgRoam")
+      org-ellipsis " ▼"
+      org-superstar-headline-bullets-list '("◉" "○")
+      org-agenda-span 7
+      org-agenda-start-on-weekday 1
+      org-agenda-start-day "+0d"
+      org-log-into-drawer t
+      org-startup-with-latex-preview t
+      org-agenda-files `(,org-directory))
+      
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+(defun my/org-config ()
+        (dolist (face '((org-level-1 . 1.5)
+                        (org-level-2 . 1.4)
+                        (org-level-3 . 1.3)
+                        (org-level-4 . 1.2)
+                        (org-level-5 . 1.1)
+                        (org-level-6 . 1.1)
+                        (org-level-7 . 1.1)
+                        (org-level-8 . 1.05)))
+        (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
+
+        (set-face-attribute 'org-document-title nil :height 300)
+        (set-face-attribute 'org-block nil :foreground nil :background "#353848" :inherit 'fixed-pitch)
+        (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-table nil :background "#353848" :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+
+        (setq org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")))
+        (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
+                                   (,(concat org-directory "/todo.org") :maxlevel . 1)))
+        (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1))))
+
+(defun my/org-hook ()
+  (variable-pitch-mode 1)
+  (org-indent-mode)
+  (display-line-numbers-mode -1)
+  (org-fragtog-mode))
+
+
+(use-package org
+  :straight (:type built-in)
+  :hook
+  (org-mode . my/org-hook)
+  :config
+  (my/org-config))
+
+(use-package org-fragtog)
