@@ -7,6 +7,9 @@
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
 (set-face-attribute 'default nil :font "Jetbrainsmono-12")
+(set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
+(set-face-attribute 'variable-pitch nil :font "Liberation Sans-12")
+
 (cond ((eq system-type 'windows-nt)
        (setq sync-dir "C:/Users/Daniel Walters/Dropbox")
        ;; Windows-specific code goes here.
