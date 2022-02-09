@@ -93,3 +93,12 @@
 
 (use-package helm-projectile
   :after projectile)
+
+(defun my/pdf-hook ()
+  (display-line-numbers-mode -1))
+
+(use-package pdf-tools
+  :hook
+  (pdf-view-mode . my/pdf-hook)
+  :init
+  (pdf-tools-install))
