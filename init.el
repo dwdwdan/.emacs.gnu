@@ -102,3 +102,16 @@
   (pdf-view-mode . my/pdf-hook)
   :init
   (pdf-tools-install))
+
+(my/leader
+  "w" '(:ignore t :which-key "Window")
+  "w s" '(evil-window-split :which-key "Horizontal Split")
+  "w v" '(evil-window-vsplit :which-key "Vertical Split")
+  "w h" '(evil-window-left :which-key "Move Left")
+  "w j" '(evil-window-down :which-key "Move Down")
+  "w k" '(evil-window-up :which-key "Move Up")
+  "w l" '(evil-window-right :which-key "Move Right")
+  "w q" '(evil-quit :which-key "Close Window")
+
+  "b" '(:ignore t :which-key "Buffer")
+  "b b" '(switch-to-buffer :which-key "Switch Buffer"))
