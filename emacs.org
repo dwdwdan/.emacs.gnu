@@ -80,9 +80,8 @@ General is the package I use to set keybindings
         :keymaps '(normal insert visual emacs)
         :prefix "SPC"
         :global-prefix "C-SPC"))
-
-
 #+end_src
+
 ** Evil
 The most important package of all, the one that makes emacs actually useable.
 #+begin_src emacs-lisp
@@ -96,8 +95,8 @@ The most important package of all, the one that makes emacs actually useable.
   (use-package evil-collection
     :after evil
     :init (evil-collection-init))
-
 #+end_src
+
 ** Helm
 #+begin_src emacs-lisp
   (use-package helm
@@ -108,22 +107,22 @@ The most important package of all, the one that makes emacs actually useable.
       "." '(helm-find-files :which-key "Find Files")
       "f" '(helm-find-files :which-key "Find Files"))
     :config (helm-mode 1))
-
 #+end_src
+
 ** Magit
 #+begin_src emacs-lisp
   (use-package magit
     :general
     (my/leader
       "g" '(magit :which-key "Magit")))
-
 #+end_src
+
 ** Which-key
 #+begin_src emacs-lisp
   (use-package which-key
     :config (which-key-mode 1))
-
 #+end_src
+
 ** Cosmetics
 At the moment I'm using gruvbox but I might change at some point.
 #+begin_src emacs-lisp
@@ -141,9 +140,8 @@ I currently use a relatively-default doom-modeline
     :custom
     (doom-modeline-buffer-encoding nil)
     (doom-modeline-indent-info t))
-
-
 #+end_src
+
 ** Projectile
 #+begin_src emacs-lisp
   (use-package projectile
