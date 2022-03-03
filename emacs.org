@@ -1,3 +1,6 @@
+#+TITLE: Emacs Configuration
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+
 * Early init.el
 :PROPERTIES:
 :header-args: :tangle early-init.el
