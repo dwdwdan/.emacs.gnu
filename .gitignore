@@ -1,4 +1,2 @@
-straight
-*~
-transient
-project*
+*
+!emacs.org
