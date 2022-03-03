@@ -22,15 +22,19 @@ here
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
 
-  (set-face-attribute 'default nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12")
 #+end_src
 
 * Init.el
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
+** Fonts
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :font "Jetbrainsmono-12")
+  (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
+  (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12")
+  #+end_src 
+
 ** Line Numbers
 I like to have relative line numbers
 #+begin_src emacs-lisp
