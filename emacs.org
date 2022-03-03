@@ -256,8 +256,7 @@ Set keybinds to move around windows and switch buffers
   (defun my/org-hook ()
     (variable-pitch-mode 1)
     (org-indent-mode)
-    (display-line-numbers-mode -1)
-    (org-fragtog-mode))
+    (display-line-numbers-mode -1))
 
 
   (use-package org
@@ -267,7 +266,9 @@ Set keybinds to move around windows and switch buffers
     :config
     (my/org-config))
 
-  (use-package org-fragtog)
+  (use-package org-fragtog
+    :hook (org-mode . org-fragtog-mode))
+
   (use-package org-superstar
     :hook (org-mode . org-superstar-mode))
 (use-package htmlize)
