@@ -13,8 +13,7 @@ We don't want emacs to load it's default packaging system
 
 ** Cosmetics
 We can tell emacs not to load the startup message, menu-bar etc in
-~early-init.el~ so it doesn't load them at all. We also set the fonts
-here
+~early-init.el~ so it doesn't load them at all. 
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)
 
@@ -149,27 +148,6 @@ I currently use a relatively-default doom-modeline
     (doom-modeline-indent-info t))
 #+end_src
 
-** Projectile
-#+begin_src emacs-lisp
-  (use-package projectile
-    :init
-    (projectile-mode 1)
-    :general
-    ("C-c p" 'projectile-command-map)
-    (my/leader
-      "p" '(:ignore t :which-key "Projectile")
-      "p p" '(projectile-switch-project :which-key "Switch Project")
-      "p !" '(projectile-run-shell-command-in-root :which-key "Project Shell Command")
-      "p f" '(projectile-find-file :which-key "Find File")
-      "SPC" '(projectile-find-file :which-key "Projectile Find File"))
-    :custom
-    (projectile-project-search-path '("~/repos")))
-
-  (use-package helm-projectile
-    :after projectile)
-
-#+end_src
-
 ** pdf-tools
 I don't want line numbers in pdf files, they're completely useless
 #+begin_src emacs-lisp
@@ -225,33 +203,33 @@ Set keybinds to move around windows and switch buffers
         org-log-into-drawer t
         org-startup-with-latex-preview t
         org-agenda-files `(,org-directory))
-      
+
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
   (defun my/org-config ()
-          (dolist (face '((org-level-1 . 1.5)
-                          (org-level-2 . 1.4)
-                          (org-level-3 . 1.3)
-                          (org-level-4 . 1.2)
-                          (org-level-5 . 1.1)
-                          (org-level-6 . 1.1)
-                          (org-level-7 . 1.1)
-                          (org-level-8 . 1.05)))
-          (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
+    (dolist (face '((org-level-1 . 1.5)
+                    (org-level-2 . 1.4)
+                    (org-level-3 . 1.3)
+                    (org-level-4 . 1.2)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.05)))
+      (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
 
-          (set-face-attribute 'org-document-title nil :height 300)
-          (set-face-attribute 'org-block nil :foreground nil :background "#353848" :inherit 'fixed-pitch)
-          (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-          (set-face-attribute 'org-table nil :background "#353848" :inherit '(shadow fixed-pitch))
-          (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-          (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-          (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-          (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-document-title nil :height 300)
+    (set-face-attribute 'org-block nil :foreground nil :background "#353848" :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil :background "#353848" :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 
-          (setq org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")))
-          (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
-                                     (,(concat org-directory "/todo.org") :maxlevel . 1)))
-          (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1))))
+    (setq org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")))
+    (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
+                               (,(concat org-directory "/todo.org") :maxlevel . 1)))
+    (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1))))
 
   (defun my/org-hook ()
     (variable-pitch-mode 1)
@@ -263,6 +241,10 @@ Set keybinds to move around windows and switch buffers
     :straight (:type built-in)
     :hook
     (org-mode . my/org-hook)
+    :general
+    (my/leader
+      "n" '(:ignore t :which-key "Notes")
+      "n c" '(org-capture :which-key "Org Capture"))
     :config
     (my/org-config))
 
@@ -271,5 +253,55 @@ Set keybinds to move around windows and switch buffers
 
   (use-package org-superstar
     :hook (org-mode . org-superstar-mode))
-(use-package htmlize)
+  (use-package htmlize)
+#+end_src
+
+** Projectile
+#+begin_src emacs-lisp
+    (use-package projectile
+      :init
+      (projectile-mode 1)
+      :general
+      ("C-c p" 'projectile-command-map)
+      (my/leader
+        "p" '(:ignore t :which-key "Projectile")
+        "p p" '(projectile-switch-project :which-key "Switch Project")
+        "p !" '(projectile-run-shell-command-in-root :which-key "Project Shell Command")
+        "p f" '(projectile-find-file :which-key "Find File")
+        "SPC" '(projectile-find-file :which-key "Projectile Find File"))
+      :custom
+      (projectile-project-search-path '("~/repos")))
+
+    (use-package helm-projectile
+      :after projectile)
+
+    (use-package org-projectile
+      :config
+      (progn
+        (org-projectile-per-project)
+        (setq org-projectile-per-project-filepath "todos.org")
+        (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
+        (push (org-projectile-project-todo-entry) org-capture-templates))
+      )
+#+end_src
+
+** Company Mode
+#+begin_src emacs-lisp
+  (use-package company
+    :init (global-company-mode)
+    :config
+    (setq company-dabbrev-downcase 0
+          company-idle-delay 0.1
+          company-minimum-prefix-length 2)
+    :custom-face
+        (company-tooltip
+            ((t (:family "JetBrainsmono")))))
+#+end_src
+
+** YASnippets
+
+#+begin_src emacs-lisp
+(use-package yasnippet
+:config
+(yas-global-mode))
 #+end_src
