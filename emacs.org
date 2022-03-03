@@ -268,4 +268,7 @@ Set keybinds to move around windows and switch buffers
     (my/org-config))
 
   (use-package org-fragtog)
+  (use-package org-superstar
+    :hook (org-mode . org-superstar-mode))
+(use-package htmlize)
 #+end_src
