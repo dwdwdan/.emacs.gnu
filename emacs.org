@@ -265,8 +265,10 @@ My org mode configuration is probably the largest section of my emacs configurat
     (mixed-pitch-mode 1)
     (org-indent-mode)
     (display-line-numbers-mode -1))
-
-
+#+end_src
+*** Mappings and use-package
+This block actually requires org mode, activates the hook, and adds mappings. So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
+#+begin_src emacs-lisp
   (use-package org
     :straight (:type built-in)
     :hook
@@ -285,8 +287,12 @@ My org mode configuration is probably the largest section of my emacs configurat
     (my/org-config))
 #+end_src
 
+*** Fragtog
+Org fragtog will render latex previews when the cursor is outside them. It will turn off the rendering when the cursor enters the block, allowing easier editing.
+#+begin_src emacs-lisp
   (use-package org-fragtog
     :hook (org-mode . org-fragtog-mode))
+#+end_src
 
 *** Superstar
 Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
@@ -299,6 +305,10 @@ Org superstar is a package that turns the * in headers into nicer characters. Th
           org-superstar-leading-bullet ?\s))
 
 #+end_src
+
+*** Htmlize
+Htmlize seems to be a depency to export to html properly.
+#+begin_src emacs-lisp
   (use-package htmlize)
 #+end_src
 
