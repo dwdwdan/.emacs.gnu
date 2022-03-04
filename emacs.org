@@ -84,12 +84,17 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
 ** General
 General is the package I use to set keybindings
 #+begin_src emacs-lisp
-  (use-package general
-    :config
+    (use-package general
+      :config
       (general-create-definer my/leader
-        :keymaps '(normal insert visual emacs)
+        :states '(normal insert visual emacs)
         :prefix "SPC"
-        :global-prefix "C-SPC"))
+        :global-prefix "C-SPC")
+      (general-create-definer my/local-leader
+        :states '(normal insert visual emacs)
+        :prefix "SPC m"
+  :global-prefix "C-SPC m"))
+
 #+end_src
 
 ** Evil
