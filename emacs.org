@@ -119,8 +119,7 @@ The most important package of all, the one that makes emacs actually useable.
     ("M-x" 'helm-M-x)
     ("C-x C-f" 'helm-find-files)
     (my/leader
-      "." '(helm-find-files :which-key "Find Files")
-      "f" '(helm-find-files :which-key "Find Files"))
+      "." '(helm-find-files :which-key "Find Files"))
     :config (helm-mode 1))
 #+end_src
 
@@ -176,19 +175,30 @@ I don't want line numbers in pdf files, they're completely useless
 ** Windows and buffers
 Set keybinds to move around windows and switch buffers
 #+begin_src emacs-lisp
-    (my/leader
-      "w" '(:ignore t :which-key "Window")
-      "w s" '(evil-window-split :which-key "Horizontal Split")
-      "w v" '(evil-window-vsplit :which-key "Vertical Split")
-      "w h" '(evil-window-left :which-key "Move Left")
-      "w j" '(evil-window-down :which-key "Move Down")
-      "w k" '(evil-window-up :which-key "Move Up")
-      "w l" '(evil-window-right :which-key "Move Right")
-      "w q" '(evil-quit :which-key "Close Window")
+  (defun my/open-config()
+    (interactive)
+    (find-file config-file))
 
-      "b" '(:ignore t :which-key "Buffer")
-      "b b" '(switch-to-buffer :which-key "Switch Buffer")
-      "b r" '(revert-buffer :which-key "Revert Buffer"))
+  (my/leader
+    "w" '(:ignore t :which-key "Window")
+    "w s" '(evil-window-split :which-key "Horizontal Split")
+    "w v" '(evil-window-vsplit :which-key "Vertical Split")
+    "w h" '(evil-window-left :which-key "Move Left")
+    "w j" '(evil-window-down :which-key "Move Down")
+    "w k" '(evil-window-up :which-key "Move Up")
+    "w l" '(evil-window-right :which-key "Move Right")
+    "w q" '(evil-quit :which-key "Close Window")
+
+    "f" '(:ignore t :which-key "Files")
+    "f c" '(my/open-config :which-key "Config File")
+    "f f" '(find-files :which-key "Find Files")
+
+    "o" '(:ignore t :which-key "Open Application")
+    "o a" '(org-agenda :which-key "Agenda")
+
+    "b" '(:ignore t :which-key "Buffer")
+    "b b" '(switch-to-buffer :which-key "Switch Buffer")
+    "b r" '(revert-buffer :which-key "Revert Buffer"))
 
 #+end_src
 
