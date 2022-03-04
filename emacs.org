@@ -53,6 +53,9 @@ We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have
              ;; Linux-specific code goes here.
              ))
   "Directory that files should be synced in. ~/Nextcloud by default on linux and C://Users.Daniel Walters/Dropbox on windows")
+
+      (defconst config-file "~/.emacs.gnu/emacs.org"
+    "Emacs Configuration file location. This is used to open the config file with one button press")
 #+end_src
 
 ** Straight.el
