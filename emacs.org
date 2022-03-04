@@ -233,8 +233,11 @@ My org mode configuration is probably the largest section of my emacs configurat
 
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
+*** Faces
+#+begin_src emacs-lisp
   (defun my/org-config ()
-    (dolist (face '((org-level-1 . 1.5)
+    (dolist (face '((org-document-title . 3.0)
+                    (org-level-1 . 1.5)
                     (org-level-2 . 1.4)
                     (org-level-3 . 1.3)
                     (org-level-4 . 1.2)
