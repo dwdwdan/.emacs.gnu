@@ -245,24 +245,24 @@ My org mode configuration is probably the largest section of my emacs configurat
                     (org-level-6 . 1.1)
                     (org-level-7 . 1.1)
                     (org-level-8 . 1.05)))
-      (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
+      (set-face-attribute (car face) nil :weight 'bold :height (cdr face))))
 
-    (set-face-attribute 'org-document-title nil :height 300)
-    (set-face-attribute 'org-block nil :foreground nil :background "#353848" :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-table nil :background "#353848" :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+#+end_src
 
+#+begin_src emacs-lisp
+(use-package mixed-pitch)
+#+end_src
+
+#+begin_src emacs-lisp
     (setq org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")))
     (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
                                (,(concat org-directory "/todo.org") :maxlevel . 1)))
-    (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1))))
+    (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1)))
+#+end_src
 
+#+begin_src emacs-lisp
   (defun my/org-hook ()
-    (variable-pitch-mode 1)
+    (mixed-pitch-mode 1)
     (org-indent-mode)
     (display-line-numbers-mode -1))
 
