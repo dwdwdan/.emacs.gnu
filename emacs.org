@@ -1,5 +1,6 @@
 #+TITLE: Emacs Configuration
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+auto_tangle: t
 
 * Early init.el
 :PROPERTIES:
@@ -280,6 +281,14 @@ My org mode configuration is probably the largest section of my emacs configurat
   (use-package org-superstar
     :hook (org-mode . org-superstar-mode))
   (use-package htmlize)
+#+end_src
+
+*** Auto Tangle
+org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_tangle:~ option to non-nil.
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :hook
+    (org-mode . org-auto-tangle-mode))
 #+end_src
 
 ** Projectile
