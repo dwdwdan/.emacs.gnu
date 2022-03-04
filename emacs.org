@@ -145,7 +145,7 @@ At the moment I'm using gruvbox but I might change at some point.
 #+begin_src emacs-lisp
   (use-package doom-themes
     :config
-    (load-theme 'doom-gruvbox t)
+    (load-theme 'doom-dracula t)
     (doom-themes-org-config))
 #+end_src
 
