@@ -356,10 +356,10 @@ org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_ta
     :config
     (setq company-dabbrev-downcase 0
           company-idle-delay 0.1
-          company-minimum-prefix-length 2)
+          company-minimum-prefix-length 1)
     :custom-face
-        (company-tooltip
-            ((t (:family "JetBrainsmono")))))
+    (company-tooltip
+     ((t (:family "JetBrainsmono")))))
 #+end_src
 
 ** YASnippets
