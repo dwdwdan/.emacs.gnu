@@ -274,9 +274,16 @@ My org mode configuration is probably the largest section of my emacs configurat
     :general
     (my/leader
       "n" '(:ignore t :which-key "Notes")
+      "n n" '(org-capture :which-key "Org Capture")
       "n c" '(org-capture :which-key "Org Capture"))
+    (my/local-leader
+      :keymaps 'org-mode-map
+      "t" '(org-babel-tangle :which-key "Tangle")
+      "e" '(org-export-dispatch :which-key "Export")
+      "l" '(org-insert-link :which-key "Insert Link"))
     :config
     (my/org-config))
+#+end_src
 
   (use-package org-fragtog
     :hook (org-mode . org-fragtog-mode))
