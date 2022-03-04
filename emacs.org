@@ -129,7 +129,9 @@ The most important package of all, the one that makes emacs actually useable.
   (use-package magit
     :general
     (my/leader
-      "g" '(magit :which-key "Magit")))
+      "g" '(magit :which-key "Magit"))
+    :hook
+    (with-editor-mode . evil-insert-state))
 #+end_src
 
 ** Which-key
