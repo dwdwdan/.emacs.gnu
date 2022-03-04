@@ -314,6 +314,26 @@ Set keybinds to move around windows and switch buffers
 :config
 (yas-global-mode))
 #+end_src
+
+** Helpful
+Helpful is a great package that makes the emacs help menus so much nicer. I basically replace the default emacs help commands with helpful, and then add them under "SPC h" as well.
+#+begin_src emacs-lisp
+  (use-package helpful
+    :general
+    ("C-h f" 'helpful-callable)
+    ("C-h v" 'helpful-variable)
+    ("C-h k" 'helpful-key)
+    ("C-h C" 'helpful-command)
+    ("C-h h" 'helpful-at-point)
+    (my/leader
+      "h" '(:ignore t :which-key "Help")
+      "h f" '(helpful-callable :which-key "Function")
+      "h v" '(helpful-variable :which-key "Variable")
+      "h k" '(helpful-key :which-key "Keybind")
+      "h C" '(helpful-command :which-key "Command")
+      "h h" '(helpful-at-point :which-key "Here")))
+#+end_src
+
 ** Rainbow Delimeters
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
