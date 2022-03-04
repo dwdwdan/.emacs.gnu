@@ -231,7 +231,18 @@ My org mode configuration is probably the largest section of my emacs configurat
         org-agenda-start-day "+0d"
         org-agenda-files `(,org-directory))
 
+  (use-package evil-org
+    :after org
+    :hook (org-mode . evil-org-mode)
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+#+end_src
+
+
+#+begin_src emacs-lisp
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
+#+end_src
 
 *** Faces
 #+begin_src emacs-lisp
