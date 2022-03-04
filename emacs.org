@@ -314,3 +314,10 @@ Set keybinds to move around windows and switch buffers
 :config
 (yas-global-mode))
 #+end_src
+** Rainbow Delimeters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook
+    (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
