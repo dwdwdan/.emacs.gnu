@@ -213,16 +213,21 @@ Set keybinds to move around windows and switch buffers
 #+end_src
 
 ** org
+My org mode configuration is probably the largest section of my emacs configuration.
+
 #+begin_src emacs-lisp
   (setq org-directory (concat sync-dir "/Org")
-        org-roam-directory (concat sync-dir "/OrgRoam")
         org-ellipsis " ▼"
-        org-superstar-headline-bullets-list '("◉" "○")
-        org-agenda-span 7
+        org-hide-emphasis-markers t
+        org-log-into-drawer t
+        org-startup-with-latex-preview t)
+#+end_src
+
+*** Agenda
+#+begin_src emacs-lisp
+  (setq org-agenda-span 7
         org-agenda-start-on-weekday 1
         org-agenda-start-day "+0d"
-        org-log-into-drawer t
-        org-startup-with-latex-preview t
         org-agenda-files `(,org-directory))
 
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
