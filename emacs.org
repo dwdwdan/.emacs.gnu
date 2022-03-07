@@ -83,19 +83,20 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
 #+end_src
 
 ** General
-General is the package I use to set keybindings
+General is the package I use to set keybindings. We use the ~:keymaps 'override~ line so that my leader key isn't overwritten in certain modes. I spent ages trying to figure this out but [[https://emacs.stackexchange.com/a/52056][this stackexchange answer]] sorted it out for me.
 #+begin_src emacs-lisp
-    (use-package general
-      :config
-      (general-create-definer my/leader
-        :states '(normal insert visual emacs)
-        :prefix "SPC"
-        :global-prefix "C-SPC")
-      (general-create-definer my/local-leader
-        :states '(normal insert visual emacs)
-        :prefix "SPC m"
-  :global-prefix "C-SPC m"))
-
+  (use-package general
+    :config
+    (general-create-definer my/leader
+      :states '(normal insert visual emacs)
+      :keymaps 'override
+      :prefix "SPC"
+      :global-prefix "C-SPC")
+    (general-create-definer my/local-leader
+      :states '(normal insert visual emacs)
+      :keymaps 'override
+      :prefix "SPC m"
+      :global-prefix "C-SPC m"))
 #+end_src
 
 ** Evil
