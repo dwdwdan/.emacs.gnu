@@ -1,5 +1,6 @@
 #+TITLE: Emacs Configuration
-#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+SETUPFILE: /home/dan/repos/org-html/setup.setup
+#+OPTIONS: html-style:nil
 #+auto_tangle: t
 
 * Early init.el
