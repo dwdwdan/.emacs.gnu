@@ -225,6 +225,8 @@ My org mode configuration is probably the largest section of my emacs configurat
         org-ellipsis " ▼"
         org-hide-emphasis-markers t
         org-log-into-drawer t
+        ;; org-startup-truncated nil means that truncate-lines will be enabled when loading an org buffer
+        org-startup-truncated nil 
         org-startup-with-latex-preview t)
 #+end_src
 
