@@ -115,11 +115,14 @@ The most important package of all, the one that makes emacs actually useable.
 #+end_src
 
 ** Helm
+Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am more used to this, and feels a lot more natural than going to the arrow keys.
 #+begin_src emacs-lisp
   (use-package helm
     :general
     ("M-x" 'helm-M-x)
     ("C-x C-f" 'helm-find-files)
+    (:keymaps 'helm-map "C-j" 'helm-next-line)
+    (:keymaps 'helm-map "C-k" 'helm-previous-line)
     (my/leader
       "." '(helm-find-files :which-key "Find Files"))
     :config (helm-mode 1))
