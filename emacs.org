@@ -367,6 +367,7 @@ org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_ta
 #+end_src
 
 ** Company Mode
+Company mode is my completion engine, mainly because I don't know of any others. I have the idle delay and the minimum prefix length as quite small as I like completions to appear often and without delay.
 #+begin_src emacs-lisp
   (use-package company
     :init (global-company-mode)
@@ -380,7 +381,7 @@ org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_ta
 #+end_src
 
 ** YASnippets
-
+I use [[https://github.com/joaotavora/yasnippet][yasnippet]] for my snippets. I don't use any already existing snippet packages as I wanted to build my own. I keep a seperate git repository for my snippets [[https:github.com/dwdwdan/yasnippets][on github]].
 #+begin_src emacs-lisp
 (use-package yasnippet
 :config
