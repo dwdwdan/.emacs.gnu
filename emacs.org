@@ -410,3 +410,12 @@ Helpful is a great package that makes the emacs help menus so much nicer. I basi
     :hook
     (prog-mode . rainbow-delimiters-mode))
 #+end_src
+
+** Vterm
+[[https://github.com/akermu/emacs-libvterm][Vterm]] is my terminal emulator of choice for use inside of emacs
+#+begin_src emacs-lisp
+  (use-package vterm
+    :general
+    (my/leader
+      "o t" '(vterm-other-window :which-key "Vterm")))
+#+end_src
