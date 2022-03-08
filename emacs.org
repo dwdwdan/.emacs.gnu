@@ -204,8 +204,8 @@ Set keybinds to move around windows and switch buffers
 
     "b" '(:ignore t :which-key "Buffer")
     "b b" '(switch-to-buffer :which-key "Switch Buffer")
+    "b k" '(kill-this-buffer :which-key "Kill Buffer")
     "b r" '(revert-buffer :which-key "Revert Buffer"))
-
 #+end_src
 
 ** auctex
@@ -215,7 +215,6 @@ Set keybinds to move around windows and switch buffers
     :config
     (setq TeX-auto-save t)
     (setq TeX-parse-self t))
-
 #+end_src
 
 ** org
