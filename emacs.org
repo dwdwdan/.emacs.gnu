@@ -436,7 +436,8 @@ I use [[https://github.com/joaotavora/yasnippet][yasnippet]] for my snippets. I 
 (yas-global-mode))
 #+end_src
 
-** Helpful
+** Help
+*** Helpful
 Helpful is a great package that makes the emacs help menus so much nicer. I basically replace the default emacs help commands with helpful, and then add them under "SPC h" as well.
 #+begin_src emacs-lisp
   (use-package helpful
@@ -454,6 +455,13 @@ Helpful is a great package that makes the emacs help menus so much nicer. I basi
       "h C" '(helpful-command :which-key "Command")
       "h h" '(helpful-at-point :which-key "Here")))
 #+end_src
+*** Other Bindings
+Woman is an inbuilt package that allows you to browse Unix Man Pages
+#+begin_src emacs-lisp
+  (my/leader
+    "h m" '(woman :which-key "Man"))
+#+end_src
+
 
 ** Rainbow Delimeters
 #+begin_src emacs-lisp
