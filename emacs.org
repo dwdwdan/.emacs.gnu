@@ -344,9 +344,10 @@ This block actually requires org mode, activates the hook, and adds mappings. So
       "n c" '(org-capture :which-key "Org Capture"))
     (my/local-leader
       :keymaps 'org-mode-map
-      "t" '(org-babel-tangle :which-key "Tangle")
+      "T" '(org-babel-tangle :which-key "Tangle")
       "e" '(org-export-dispatch :which-key "Export")
-      "l" '(org-insert-link :which-key "Insert Link"))
+      "l" '(org-insert-link :which-key "Insert Link")
+      "t" '(org-todo :which-key "Todo"))
     :config
     (my/org-config))
 #+end_src
