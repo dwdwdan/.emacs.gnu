@@ -478,3 +478,28 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (my/leader
       "o t" '(vterm-other-window :which-key "Vterm")))
 #+end_src
+
+** Perspective.el
+[[https://github.com/nex3/perspective-el][perspective.el]] is a package that adds workspaces to emacs. It allows you to restrict the buffer list so it is shorter and only applies for a single 'perspective'. The package [[https://github.com/bbatsov/persp-projectile][perp-projectile]] adds integration to projectile, meaning that ~SPC p p~ will also create or switch to a new workspace.
+#+begin_src emacs-lisp
+  (use-package perspective
+    :init
+    (persp-mode)
+    :general
+    (my/leader
+      "W" '(:ignore t :which-key "Workspaces")
+      "W s" '(persp-switch :which-key "Switch Workspace")
+      "W r" '(persp-rename :which-key "Rename Workspace")
+      "W a" '(persp-add-buffer :which-key "Add buffer to Workspace")
+      "W j" '(persp-next :which-key "Next Workspace")
+      "W k" '(persp-prev :which-key "Previous Workspace")
+      "W m" '(persp-merge :which-key "Merge Workspace")
+      "W u" '(persp-unmerge :which-key "Unmerge Workspace")
+      "W S" '(persp-state-save :which-key "Save Workspaces")
+      "W L" '(persp-state-load :which-key "Load Workspaces")
+
+      "b B" '(persp-switch-to-buffer :which-key "Global Switch Buffer")
+      ))
+
+  (use-package persp-projectile)
+#+end_src
