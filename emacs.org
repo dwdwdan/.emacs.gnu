@@ -204,7 +204,7 @@ Set keybinds to move around windows and switch buffers
     "o a" '(org-agenda :which-key "Agenda")
 
     "b" '(:ignore t :which-key "Buffer")
-    "b b" '(switch-to-buffer :which-key "Switch Buffer")
+    "b b" '(helm-buffers-list :which-key "Switch Buffer")
     "b k" '(kill-this-buffer :which-key "Kill Buffer")
     "b r" '(revert-buffer :which-key "Revert Buffer"))
 #+end_src
