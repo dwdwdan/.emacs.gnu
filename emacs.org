@@ -218,6 +218,51 @@ Set keybinds to move around windows and switch buffers
     (setq TeX-parse-self t))
 #+end_src
 
+*** Auto Compiling
+I want emacs to automatically compile on save. We create a minor mode for this, stolen from https://rtime.ciirc.cvut.cz/~sojka/blog/compile-on-save/
+#+begin_src emacs-lisp
+(defun compile-on-save-start ()
+  (let ((buffer (compilation-find-buffer)))
+    (unless (get-buffer-process buffer)
+      (recompile))))
+
+(define-minor-mode compile-on-save-mode
+  "Minor mode to automatically call `recompile' whenever the
+current buffer is saved. When there is ongoing compilation,
+nothing happens."
+  :lighter " CoS"
+    (if compile-on-save-mode
+    (progn  (make-local-variable 'after-save-hook)
+        (add-hook 'after-save-hook 'compile-on-save-start nil t))
+      (kill-local-variable 'after-save-hook)))
+#+end_src
+
+I don't want to actually show the compilation buffer, so we use this snippet which is a part of https://stackoverflow.com/a/60990667
+#+begin_src emacs-lisp
+(defadvice compilation-start
+  (around inhibit-display
+      (command &optional mode name-function highlight-regexp))
+  (if (not (string-match "^\\(find\\|grep\\)" command))
+      (cl-letf ((display-buffer   #'ignore)
+                (set-window-point #'ignoreco)
+                (goto-char        #'ignore))
+        (save-window-excursion
+          ad-do-it))
+    ad-do-it))
+
+(ad-activate 'compilation-start)
+#+end_src
+
+#+begin_src emacs-lisp
+(defun dan/latex-hook()
+  (compile-on-save-mode 1)
+  (setq-local compile-command "latexmk -interaction=nonstopmode")
+  (compile compile-command))
+
+(add-hook 'LaTeX-mode-hook 'dan/latex-hook)
+(add-hook 'pdf-view-mode-hook 'auto-revert-mode 1)
+#+end_src
+
 ** org
 My org mode configuration is probably the largest section of my emacs configuration.
 
