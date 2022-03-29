@@ -330,6 +330,15 @@ My org mode configuration is probably the largest section of my emacs configurat
     (display-line-numbers-mode -1))
 #+end_src
 
+*** Org find file
+This function will open helm-find-files starting at the org directory
+#+begin_src emacs-lisp
+  (defun dan/org-find-file()
+    (interactive)
+    (let ((default-directory (file-name-as-directory org-directory)))
+      (funcall-interactively #'helm-find-files default-directory)))
+#+end_src
+
 *** Mappings and use-package
 This block actually requires org mode, activates the hook, and adds mappings. So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
 #+begin_src emacs-lisp
