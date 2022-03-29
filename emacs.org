@@ -436,6 +436,13 @@ Company mode is my completion engine, mainly because I don't know of any others.
     :custom-face
     (company-tooltip
      ((t (:family "JetBrainsmono")))))
+
+  (defun text-mode-company-setup()
+    (make-local-variable 'company-backends)
+    (add-to-list 'company-backends 'company-ispell)
+    (delete 'company-dabbrev company-backends))
+
+(add-hook 'text-mode-hook 'text-mode-company-setup)
 #+end_src
 
 ** YASnippets
