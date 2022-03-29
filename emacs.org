@@ -342,23 +342,24 @@ This function will open helm-find-files starting at the org directory
 *** Mappings and use-package
 This block actually requires org mode, activates the hook, and adds mappings. So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
 #+begin_src emacs-lisp
-  (use-package org
-    :straight (:type built-in)
-    :hook
-    (org-mode . my/org-hook)
-    :general
-    (my/leader
-      "n" '(:ignore t :which-key "Notes")
-      "n n" '(org-capture :which-key "Org Capture")
-      "n c" '(org-capture :which-key "Org Capture"))
-    (my/local-leader
-      :keymaps 'org-mode-map
-      "T" '(org-babel-tangle :which-key "Tangle")
-      "e" '(org-export-dispatch :which-key "Export")
-      "l" '(org-insert-link :which-key "Insert Link")
-      "t" '(org-todo :which-key "Todo"))
-    :config
-    (my/org-config))
+      (use-package org
+        :straight (:type built-in)
+        :hook
+        (org-mode . my/org-hook)
+        :general
+        (my/leader
+          "n" '(:ignore t :which-key "Notes")
+          "n n" '(org-capture :which-key "Org Capture")
+          "n c" '(org-capture :which-key "Org Capture")
+          "n f" '(dan/org-find-file :which-key "Org Find File"))
+        (my/local-leader
+          :keymaps 'org-mode-map
+          "T" '(org-babel-tangle :which-key "Tangle")
+          "e" '(org-export-dispatch :which-key "Export")
+          "l" '(org-insert-link :which-key "Insert Link")
+          "t" '(org-todo :which-key "Todo"))
+        :config
+        (my/org-config))
 #+end_src
 
 *** Fragtog
