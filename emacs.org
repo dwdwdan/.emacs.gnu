@@ -385,6 +385,18 @@ org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_ta
     (org-mode . org-auto-tangle-mode))
 #+end_src
 
+*** Publish
+#+begin_src emacs-lisp
+  (setq org-publish-project-alist (list
+                                   (list "emacs config"
+                                         :base-directory "~/.emacs.gnu"
+                                         :publishing-directory "/ssh:server:/var/www/personal"
+                                         ;;:publishing-directory "~/tmp"
+                                         :base-extension "org"
+                                         :publishing-function 'org-html-publish-to-html
+                                         :recursive nil)))
+#+end_src
+
 ** Projectile
 #+begin_src emacs-lisp
   (use-package projectile
