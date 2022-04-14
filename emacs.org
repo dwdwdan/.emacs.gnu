@@ -78,6 +78,22 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
 
 #+end_src
 
+** Helper functions
+#+begin_src emacs-lisp
+    ;; We need the s library to do some string comparison
+      (use-package s)
+
+      (defun dan/load-config-file(file)
+  "Loads a config file FILE, stored in `config-dir'. Used as a
+  helper function to load additional configuration files"
+        (interactive "M")
+        (unless (s-suffix? ".el" file)
+          (setq file (concat file ".el")))
+        (setq file (expand-file-name file config-dir))
+        (unless (file-exists-p file)
+          (error "File %s does not exist. It cannot be loaded." file))
+        (load-file file))
+#+end_src
 
 ** Fonts
 #+begin_src emacs-lisp
