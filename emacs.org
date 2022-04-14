@@ -423,6 +423,19 @@ org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_ta
                                          :recursive nil)))
 #+end_src
 
+*** Github Links
+[[https://github.com/lygaret/emacs.d/blob/rewrite/site-lisp/org-github-links.el][org-github-links.el]] is a package/script to add easy github links to org. They have the form
+
+#+begin_example
+github:user/repo
+github:user/repo@a738b4b8
+github:user/repo#45
+#+end_example
+
+#+begin_src emacs-lisp
+(dan/load-config-file "org-github-links")
+#+end_src
+
 ** Projectile
 #+begin_src emacs-lisp
   (use-package projectile

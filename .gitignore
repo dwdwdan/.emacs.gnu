@@ -1,2 +1,5 @@
 *
 !emacs.org
+!*el
+init.el
+early-init.el
