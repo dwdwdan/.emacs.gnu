@@ -29,36 +29,30 @@ We can tell emacs not to load the startup message, menu-bar etc in
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
-** Fonts
-#+begin_src emacs-lisp
-  (set-face-attribute 'default nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12")
-  #+end_src 
-
-** Line Numbers
-I like to have relative line numbers
-#+begin_src emacs-lisp
-  (setq display-line-numbers-type 'relative)
-(global-display-line-numbers-mode)
-#+end_src
-
 ** System Variables
 We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have emacs on any of my windows machines
 #+begin_src emacs-lisp
   (defconst sync-dir 
-      (cond ((eq system-type 'windows-nt)
-             (setq sync-dir "C:/Users/Daniel Walters/Dropbox")
-             ;; Windows-specific code goes here.
-             )
-            ((eq system-type 'gnu/linux)
-             (setq sync-dir "~/Nextcloud")
-             ;; Linux-specific code goes here.
-             ))
-  "Directory that files should be synced in. ~/Nextcloud by default on linux and C://Users.Daniel Walters/Dropbox on windows")
+    (cond ((eq system-type 'windows-nt)
+           (setq sync-dir "C:/Users/Daniel Walters/Dropbox")
+           ;; Windows-specific code goes here.
+           )
+          ((eq system-type 'gnu/linux)
+           (setq sync-dir "~/Nextcloud")
+           ;; Linux-specific code goes here.
+           ))
+    "Directory that files should be synced in. ~/Nextcloud by
+    default on linux and C://Users.Daniel Walters/Dropbox on
+    windows")
 
-      (defconst config-file "~/.emacs.gnu/emacs.org"
-    "Emacs Configuration file location. This is used to open the config file with one button press")
+  (defconst config-file "emacs.org"
+    "Emacs Configuration file name. This should be a file name
+    relative to `config-dir'. This is used to open the config file
+    with one button press")
+
+  (defconst config-dir "~/.emacs.gnu"
+    "Emacs Configuration Directory. This is where emacs config
+    files should be stored")
 #+end_src
 
 ** Straight.el
@@ -82,6 +76,21 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
   (straight-use-package 'use-package)
   (setq straight-use-package-by-default t)
 
+#+end_src
+
+
+** Fonts
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :font "Jetbrainsmono-12")
+  (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
+  (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12")
+  #+end_src 
+
+** Line Numbers
+I like to have relative line numbers
+#+begin_src emacs-lisp
+  (setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode)
 #+end_src
 
 ** General
@@ -184,7 +193,8 @@ Set keybinds to move around windows and switch buffers
 #+begin_src emacs-lisp
   (defun my/open-config()
     (interactive)
-    (find-file config-file))
+    (persp-switch ".emacs.gnu")
+    (find-file (expand-file-name config-file config-dir)))
 
   (my/leader
     "w" '(:ignore t :which-key "Window")
