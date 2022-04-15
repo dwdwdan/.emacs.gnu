@@ -482,9 +482,12 @@ Company mode is my completion engine, mainly because I don't know of any others.
 ** YASnippets
 I use [[https://github.com/joaotavora/yasnippet][yasnippet]] for my snippets. I don't use any already existing snippet packages as I wanted to build my own. I keep a seperate git repository for my snippets [[https:github.com/dwdwdan/yasnippets][on github]].
 #+begin_src emacs-lisp
-(use-package yasnippet
-:config
-(yas-global-mode))
+  (use-package yasnippet
+    :general
+    (:keymaps 'yas-minor-mode-map
+              "C-;" yas-maybe-expand)
+    :config
+    (yas-global-mode))
 #+end_src
 
 ** Help
