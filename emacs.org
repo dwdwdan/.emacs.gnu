@@ -96,6 +96,15 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
         (load-file file))
 #+end_src
 
+Simpler Macro for ~plist-put~. Stolen from [[https://emacs.stackexchange.com/a/39474][xuchunyang on the emacs stackexchange]] 
+#+begin_src emacs-lisp
+  (defmacro setq-plist-put (plist &rest args)
+    (let ((list nil))
+      (while args
+        (push `(setq ,plist (plist-put ,plist ,(pop args) ,(pop args))) list))
+      (cons 'progn (nreverse list))))
+#+end_src
+
 ** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil :font "Jetbrainsmono-12")
@@ -386,6 +395,11 @@ Org fragtog will render latex previews when the cursor is outside them. It will 
     :hook (org-mode . org-fragtog-mode))
 #+end_src
 
+We also want to scale up latex renders to better match the font size
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (setq-plist-put org-format-latex-options :scale 1.5))
+#+end_src
 *** Superstar
 Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
 #+begin_src emacs-lisp
