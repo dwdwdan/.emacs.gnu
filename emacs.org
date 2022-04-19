@@ -14,8 +14,7 @@ We don't want emacs to load it's default packaging system
 #+end_src
 
 ** Cosmetics
-We can tell emacs not to load the startup message, menu-bar etc in
-~early-init.el~ so it doesn't load them at all. 
+We can tell emacs not to load the startup message, menu-bar etc in ~early-init.el~ so it doesn't load them at all. 
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)
 
@@ -80,6 +79,7 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
 #+end_src
 
 ** Helper functions
+Load a config file stored in the config directory
 #+begin_src emacs-lisp
     ;; We need the s library to do some string comparison
       (use-package s)
@@ -182,7 +182,7 @@ Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am
 #+end_src
 
 ** Cosmetics
-At the moment I'm using gruvbox but I might change at some point.
+At the moment I'm using dracula but I might change at some point.
 #+begin_src emacs-lisp
   (use-package doom-themes
     :config
