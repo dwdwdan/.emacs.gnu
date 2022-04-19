@@ -589,7 +589,8 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
 
     (mu4e-drafts-folder "/personal/Drafts")
     (mu4e-sent-folder "/personal/Sent")
-    (mu4e-trash-folder "/personal/Trash")
+    (mu4e-trash-folder "/personal/Deleted")
+    (mu4e-refile-folder "/personal/Archive")
 
     (user-mail-address "dan.walters5@outlook.com")
 
