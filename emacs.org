@@ -332,12 +332,9 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
     (evil-org-agenda-set-keys))
 #+end_src
 
-
-#+begin_src emacs-lisp
-  (advice-add 'org-refile :after 'org-save-all-org-buffers)
-#+end_src
-
 *** Faces
+**** Heading Size
+First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
     (dolist (face '((org-document-title . 3.0)
@@ -350,14 +347,16 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
                     (org-level-7 . 1.1)
                     (org-level-8 . 1.05)))
       (set-face-attribute (car face) nil :weight 'bold :height (cdr face))))
-
 #+end_src
 
+**** Mixed Pitch
+The mixed pitch package sets certain elements in a document to be fixed pitch and others to variable. This is very useful in org mode, so I can have a variable pitch font for most of the body, but a fixed pitch font for code blocks.
 #+begin_src emacs-lisp
   (use-package mixed-pitch
   :hook (org-mode . mixed-pitch-mode))
 #+end_src
 
+**** Todo and capture
 #+begin_src emacs-lisp
     (setq org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")))
     (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
@@ -365,7 +364,9 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
     (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1)))
 #+end_src
 
+Whenever I refile (archive) a todo, I want to save all buffers. By default emacs will simply move the item, but not save the files. This essentially means that if emacs is forced to shutdown the refile will not have happened.
 #+begin_src emacs-lisp
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 *** Use-package
 This block actually requires org mode and activates the hooks.
@@ -404,6 +405,7 @@ We also want to scale up latex renders to better match the font size
   (with-eval-after-load 'org
     (setq-plist-put org-format-latex-options :scale 1.5))
 #+end_src
+
 *** Superstar
 Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
 #+begin_src emacs-lisp
@@ -413,7 +415,6 @@ Org superstar is a package that turns the * in headers into nicer characters. Th
     :config
     (setq org-superstar-headline-bullets-list '("◉" "○")
           org-superstar-leading-bullet ?\s))
-
 #+end_src
 
 *** Htmlize
@@ -423,7 +424,7 @@ Htmlize seems to be a depency to export to html properly.
 #+end_src
 
 *** Auto Tangle
-org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_tangle:~ option to non-nil.
+org-auto-tangle will automatically tangle an org file if it has ~#+auto_tangle~ set to ~t~
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
     :hook
@@ -431,6 +432,7 @@ org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_ta
 #+end_src
 
 *** Publish
+I use org publish to publish my emacs config to my website.
 #+begin_src emacs-lisp
   (setq org-publish-project-alist (list
                                    (list "emacs config"
