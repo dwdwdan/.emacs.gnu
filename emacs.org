@@ -75,6 +75,7 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
   ;; Configure straight
   (straight-use-package 'use-package)
   (setq straight-use-package-by-default t)
+  (setq use-package-always-demand t)
 
 #+end_src
 
