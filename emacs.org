@@ -601,3 +601,23 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
      '(("https://dansdinners.xyz/feed.xml" mine)
        ("https://planet.emacslife.com/atom.xml" emacs))))
 #+end_src
+
+** Dashboard
+[[github:emacs-dashboard/emacs-dashboard][Emacs Dashboard]] is a pretty dashboard for when emacs opens
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :init
+    (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+    :custom
+    (dashboard-projects-backend 'projectile)
+    (dashboard-items
+     '((projects . 5)
+       (agenda . 5)))
+    (dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
+    (dashboard-agenda-sort-strategy '(time-up todo-state-up))
+    (dashboard-startup-banner 'logo)
+    (dashboard-center-content t)
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
+
