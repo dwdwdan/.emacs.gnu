@@ -119,6 +119,13 @@ I like to have relative line numbers
 (global-display-line-numbers-mode)
 #+end_src
 
+** Visual Line Mode
+I prefer to use ~visual-line-mode~ rather than ~truncate-lines~. I think it looks nicer.
+#+begin_src emacs-lisp
+  (global-visual-line-mode 1)
+#+end_src
+
+
 ** General
 General is the package I use to set keybindings. We use the ~:keymaps 'override~ line so that my leader key isn't overwritten in certain modes. I spent ages trying to figure this out but [[https://emacs.stackexchange.com/a/52056][this stackexchange answer]] sorted it out for me.
 #+begin_src emacs-lisp
@@ -307,8 +314,6 @@ My org mode configuration is probably the largest section of my emacs configurat
         org-ellipsis " ▼"
         org-hide-emphasis-markers t
         org-log-into-drawer t
-        ;; org-startup-truncated nil means that truncate-lines will be enabled when loading an org buffer
-        org-startup-truncated nil 
         org-startup-with-latex-preview t)
 #+end_src
 
