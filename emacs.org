@@ -582,6 +582,7 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     :straight (:type built-in)
     :custom
     (mu4e-change-filenames-when-moving t)
+    (mu4e-confirm-quit nil)
     (mu4e-update-interval (* 10 60))
     (mu4e-get-mail-command "mbsync -a")
     (mu4e-maildir "~/.mail")
