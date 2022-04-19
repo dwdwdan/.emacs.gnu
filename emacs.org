@@ -354,7 +354,8 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package mixed-pitch)
+  (use-package mixed-pitch
+  :hook (org-mode . mixed-pitch-mode))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -365,21 +366,17 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun dan/org-hook ()
-    (mixed-pitch-mode 1)
-    (org-indent-mode)
-    (display-line-numbers-mode -1))
 #+end_src
-
-*** Mappings and use-package
-This block actually requires org mode, activates the hook, and adds mappings. So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
+*** Use-package
+This block actually requires org mode and activates the hooks.
 #+begin_src emacs-lisp
   (use-package org
     :straight (:type built-in)
     :hook
-    (org-mode . dan/org-hook)
-    :config
-    (dan/org-config))
+    (org-mode . org-indent-mode)
+    (org-mode . (lambda() (display-line-numbers-mode -1))))
+#+end_src
+
 *** Mappings
 So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
 #+begin_src emacs-lisp
