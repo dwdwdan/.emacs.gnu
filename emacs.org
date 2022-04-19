@@ -617,6 +617,20 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (my/leader
       "o m" '(mu4e :which-key "Mail")
       "o M" '(mu4e-compose-new :which-key "Compose Mail")))
+
+  (use-package org-msg
+    :init
+    (setq mail-user-agent 'mu4e-user-agent)
+    :custom
+    (org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil d:nil num:nil tex:dvipng")
+    (org-msg-startup "hidestars indent inlineimages")
+    (org-msg-convert-citation t)
+    :general
+    (my/local-leader
+      :keymaps 'message-mode-map
+      "s" '(message-goto-subject :which-key "Subject")
+      "b" '(org-msg-goto-body :which-key "Body")
+      "a" '(org-msg-attach :which-key "Attach"))
     )
 #+end_src
 
