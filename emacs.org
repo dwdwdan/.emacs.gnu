@@ -80,6 +80,7 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
 #+end_src
 
 ** Helper functions
+Load a config file stored in the config directory
 #+begin_src emacs-lisp
     ;; We need the s library to do some string comparison
       (use-package s)
@@ -182,7 +183,7 @@ Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am
 #+end_src
 
 ** Cosmetics
-At the moment I'm using gruvbox but I might change at some point.
+At the moment I'm using dracula but I might change at some point.
 #+begin_src emacs-lisp
   (use-package doom-themes
     :config
