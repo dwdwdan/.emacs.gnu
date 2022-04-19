@@ -314,12 +314,16 @@ My org mode configuration is probably the largest section of my emacs configurat
 #+end_src
 
 *** Agenda
+I want my org agenda to always start on the previous monday, and show 7 days (i.e. show the full current week). I also want agenda to read from any file in my org directory.
 #+begin_src emacs-lisp
   (setq org-agenda-span 7
         org-agenda-start-on-weekday 1
         org-agenda-start-day "+0d"
         org-agenda-files `(,org-directory))
+#+end_src
 
+I need the package ~evil-org~ to add evil keys to the agenda. I don't know why this isn't included in ~evil-collection~
+#+begin_src emacs-lisp
   (use-package evil-org
     :after org
     :hook (org-mode . evil-org-mode)
