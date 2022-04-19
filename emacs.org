@@ -75,10 +75,12 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
   ;; Configure straight
   (straight-use-package 'use-package)
   (setq straight-use-package-by-default t)
+  (setq use-package-always-demand t)
 
 #+end_src
 
 ** Helper functions
+Load a config file stored in the config directory
 #+begin_src emacs-lisp
     ;; We need the s library to do some string comparison
       (use-package s)
@@ -93,6 +95,15 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
         (unless (file-exists-p file)
           (error "File %s does not exist. It cannot be loaded." file))
         (load-file file))
+#+end_src
+
+Simpler Macro for ~plist-put~. Stolen from [[https://emacs.stackexchange.com/a/39474][xuchunyang on the emacs stackexchange]] 
+#+begin_src emacs-lisp
+  (defmacro setq-plist-put (plist &rest args)
+    (let ((list nil))
+      (while args
+        (push `(setq ,plist (plist-put ,plist ,(pop args) ,(pop args))) list))
+      (cons 'progn (nreverse list))))
 #+end_src
 
 ** Fonts
@@ -114,12 +125,12 @@ General is the package I use to set keybindings. We use the ~:keymaps 'override~
 #+begin_src emacs-lisp
   (use-package general
     :config
-    (general-create-definer my/leader
+    (general-create-definer dan/leader
       :states '(normal insert visual emacs)
       :keymaps 'override
       :prefix "SPC"
       :global-prefix "C-SPC")
-    (general-create-definer my/local-leader
+    (general-create-definer dan/local-leader
       :states '(normal insert visual emacs)
       :keymaps 'override
       :prefix "SPC m"
@@ -150,7 +161,7 @@ Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am
     ("C-x C-f" 'helm-find-files)
     (:keymaps 'helm-map "C-j" 'helm-next-line)
     (:keymaps 'helm-map "C-k" 'helm-previous-line)
-    (my/leader
+    (dan/leader
       "." '(helm-find-files :which-key "Find Files"))
     :config (helm-mode 1))
 #+end_src
@@ -159,7 +170,7 @@ Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am
 #+begin_src emacs-lisp
   (use-package magit
     :general
-    (my/leader
+    (dan/leader
       "g" '(magit :which-key "Magit"))
     :hook
     (with-editor-mode . evil-insert-state))
@@ -172,7 +183,7 @@ Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am
 #+end_src
 
 ** Cosmetics
-At the moment I'm using gruvbox but I might change at some point.
+At the moment I'm using dracula but I might change at some point.
 #+begin_src emacs-lisp
   (use-package doom-themes
     :config
@@ -193,12 +204,12 @@ I currently use a relatively-default doom-modeline
 ** pdf-tools
 I don't want line numbers in pdf files, they're completely useless
 #+begin_src emacs-lisp
-  (defun my/pdf-hook ()
+  (defun dan/pdf-hook ()
     (display-line-numbers-mode -1))
 
   (use-package pdf-tools
     :hook
-    (pdf-view-mode . my/pdf-hook)
+    (pdf-view-mode . dan/pdf-hook)
     :init
     (pdf-tools-install))
 
@@ -207,12 +218,12 @@ I don't want line numbers in pdf files, they're completely useless
 ** Windows and buffers
 Set keybinds to move around windows and switch buffers
 #+begin_src emacs-lisp
-  (defun my/open-config()
+  (defun dan/open-config()
     (interactive)
     (persp-switch ".emacs.gnu")
     (find-file (expand-file-name config-file config-dir)))
 
-  (my/leader
+  (dan/leader
     "w" '(:ignore t :which-key "Window")
     "w s" '(evil-window-split :which-key "Horizontal Split")
     "w v" '(evil-window-vsplit :which-key "Vertical Split")
@@ -223,7 +234,7 @@ Set keybinds to move around windows and switch buffers
     "w q" '(evil-quit :which-key "Close Window")
 
     "f" '(:ignore t :which-key "Files")
-    "f c" '(my/open-config :which-key "Config File")
+    "f c" '(dan/open-config :which-key "Config File")
     "f f" '(find-files :which-key "Find Files")
 
     "o" '(:ignore t :which-key "Open Application")
@@ -324,7 +335,7 @@ My org mode configuration is probably the largest section of my emacs configurat
 
 *** Faces
 #+begin_src emacs-lisp
-  (defun my/org-config ()
+  (defun dan/org-config ()
     (dolist (face '((org-document-title . 3.0)
                     (org-level-1 . 1.5)
                     (org-level-2 . 1.4)
@@ -350,7 +361,7 @@ My org mode configuration is probably the largest section of my emacs configurat
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun my/org-hook ()
+  (defun dan/org-hook ()
     (mixed-pitch-mode 1)
     (org-indent-mode)
     (display-line-numbers-mode -1))
@@ -362,20 +373,20 @@ This block actually requires org mode, activates the hook, and adds mappings. So
   (use-package org
     :straight (:type built-in)
     :hook
-    (org-mode . my/org-hook)
+    (org-mode . dan/org-hook)
     :general
-    (my/leader
+    (dan/leader
       "n" '(:ignore t :which-key "Notes")
       "n n" '(org-capture :which-key "Org Capture")
       "n c" '(org-capture :which-key "Org Capture"))
-    (my/local-leader
+    (dan/local-leader
       :keymaps 'org-mode-map
       "T" '(org-babel-tangle :which-key "Tangle")
       "e" '(org-export-dispatch :which-key "Export")
       "l" '(org-insert-link :which-key "Insert Link")
       "t" '(org-todo :which-key "Todo"))
     :config
-    (my/org-config))
+    (dan/org-config))
 #+end_src
 
 *** Fragtog
@@ -385,6 +396,11 @@ Org fragtog will render latex previews when the cursor is outside them. It will 
     :hook (org-mode . org-fragtog-mode))
 #+end_src
 
+We also want to scale up latex renders to better match the font size
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (setq-plist-put org-format-latex-options :scale 1.5))
+#+end_src
 *** Superstar
 Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
 #+begin_src emacs-lisp
@@ -443,7 +459,7 @@ github:user/repo#45
     (projectile-mode 1)
     :general
     ("C-c p" 'projectile-command-map)
-    (my/leader
+    (dan/leader
       "p" '(:ignore t :which-key "Projectile")
       "p p" '(projectile-switch-project :which-key "Switch Project")
       "p !" '(projectile-run-shell-command-in-root :which-key "Project Shell Command")
@@ -455,13 +471,19 @@ github:user/repo#45
   (use-package helm-projectile
     :after projectile)
 
+
+  (defun dan/existing-org-projectile-todo-files ()
+    (setq existing-files nil)
+    (dolist (todo-file (org-projectile-todo-files) existing-files)
+      (when (file-exists-p todo-file)
+        (setq existing-files (cons todo-file existing-files)))))
+
   (use-package org-projectile
     :config
-    (progn
-      (org-projectile-per-project)
-      (setq org-projectile-per-project-filepath "todos.org")
-      (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
-      (push (org-projectile-project-todo-entry) org-capture-templates))
+    (org-projectile-per-project)
+    (setq org-projectile-per-project-filepath "todos.org")
+    (setq org-agenda-files (append org-agenda-files (dan/existing-org-projectile-todo-files)))
+    (push (org-projectile-project-todo-entry) org-capture-templates)
     )
 #+end_src
 
@@ -482,9 +504,12 @@ Company mode is my completion engine, mainly because I don't know of any others.
 ** YASnippets
 I use [[https://github.com/joaotavora/yasnippet][yasnippet]] for my snippets. I don't use any already existing snippet packages as I wanted to build my own. I keep a seperate git repository for my snippets [[https:github.com/dwdwdan/yasnippets][on github]].
 #+begin_src emacs-lisp
-(use-package yasnippet
-:config
-(yas-global-mode))
+  (use-package yasnippet
+    :general
+    (:keymaps 'yas-minor-mode-map
+              "C-;" yas-maybe-expand)
+    :config
+    (yas-global-mode))
 #+end_src
 
 ** Help
@@ -498,7 +523,7 @@ Helpful is a great package that makes the emacs help menus so much nicer. I basi
     ("C-h k" 'helpful-key)
     ("C-h C" 'helpful-command)
     ("C-h h" 'helpful-at-point)
-    (my/leader
+    (dan/leader
       "h" '(:ignore t :which-key "Help")
       "h f" '(helpful-callable :which-key "Function")
       "h v" '(helpful-variable :which-key "Variable")
@@ -509,7 +534,7 @@ Helpful is a great package that makes the emacs help menus so much nicer. I basi
 *** Other Bindings
 Woman is an inbuilt package that allows you to browse Unix Man Pages
 #+begin_src emacs-lisp
-  (my/leader
+  (dan/leader
     "h m" '(woman :which-key "Man"))
 #+end_src
 
@@ -526,7 +551,7 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
 #+begin_src emacs-lisp
   (use-package vterm
     :general
-    (my/leader
+    (dan/leader
       "o t" '(vterm-other-window :which-key "Vterm")))
 #+end_src
 
@@ -537,7 +562,7 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     :init
     (persp-mode)
     :general
-    (my/leader
+    (dan/leader
       "W" '(:ignore t :which-key "Workspaces")
       "W s" '(persp-switch :which-key "Switch Workspace")
       "W r" '(persp-rename :which-key "Rename Workspace")
@@ -560,7 +585,7 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
 #+begin_src emacs-lisp
   (use-package elfeed
     :general
-    (my/leader
+    (dan/leader
       "o r" '(elfeed :which-key "RSS reader"))
     :hook
     ;; Don't display line numbers when reading an RSS document
@@ -572,10 +597,6 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
      '(("https://dansdinners.xyz/feed.xml" mine)
        ("https://planet.emacslife.com/atom.xml" emacs))))
 #+end_src
-
-
-
-
 ** Mu4e
 #+begin_src emacs-lisp
   (use-package mu4e
@@ -636,4 +657,3 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
   (mu4e t)
   (org-msg-mode)
 #+end_src
-
