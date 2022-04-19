@@ -601,7 +601,8 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (smtpmail-smtp-server "smtp.office365.com")
     :general
     (my/leader
-      "o m" '(mu4e :which-key "Mail"))
+      "o m" '(mu4e :which-key "Mail")
+      "o M" '(mu4e-compose-new :which-key "Compose Mail")))
     )
 #+end_src
 
