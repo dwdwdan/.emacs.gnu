@@ -456,13 +456,19 @@ github:user/repo#45
   (use-package helm-projectile
     :after projectile)
 
+
+  (defun dan/existing-org-projectile-todo-files ()
+    (setq existing-files nil)
+    (dolist (todo-file (org-projectile-todo-files) existing-files)
+      (when (file-exists-p todo-file)
+        (setq existing-files (cons todo-file existing-files)))))
+
   (use-package org-projectile
     :config
-    (progn
-      (org-projectile-per-project)
-      (setq org-projectile-per-project-filepath "todos.org")
-      (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
-      (push (org-projectile-project-todo-entry) org-capture-templates))
+    (org-projectile-per-project)
+    (setq org-projectile-per-project-filepath "todos.org")
+    (setq org-agenda-files (append org-agenda-files (dan/existing-org-projectile-todo-files)))
+    (push (org-projectile-project-todo-entry) org-capture-templates)
     )
 #+end_src
 
