@@ -339,7 +339,7 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
 
 *** Faces
 #+begin_src emacs-lisp
-  (defun dan/org-config ()
+  (with-eval-after-load 'org
     (dolist (face '((org-document-title . 3.0)
                     (org-level-1 . 1.5)
                     (org-level-2 . 1.4)
