@@ -632,5 +632,8 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
       "b" '(org-msg-goto-body :which-key "Body")
       "a" '(org-msg-attach :which-key "Attach"))
     )
+
+  (mu4e t)
+  (org-msg-mode)
 #+end_src
 
