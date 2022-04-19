@@ -597,6 +597,8 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (mu4e-maildir-shortcuts
      '((:maildir "/personal/Inbox" :key ?i)))
 
+    (message-send-mail-function 'smtpmail-send-it)
+    (smtpmail-smtp-server "smtp.office365.com")
     :general
     (my/leader
       "o m" '(mu4e :which-key "Mail"))
