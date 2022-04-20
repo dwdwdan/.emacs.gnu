@@ -107,9 +107,17 @@ Simpler Macro for ~plist-put~. Stolen from [[https://emacs.stackexchange.com/a/3
 
 ** Fonts
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12")
+  (defun dan/set-fonts (&optional frame)
+;; If frame is nil, we aren't in daemon mode, so don't need to select the frame
+    (when frame
+      (select-frame frame))
+    (set-face-attribute 'default nil :font "Jetbrainsmono-12")
+    (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
+    (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12"))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'dan/set-fonts)
+    (dan/set-fonts))
   #+end_src 
 
 ** Line Numbers
