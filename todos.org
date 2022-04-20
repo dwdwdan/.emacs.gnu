@@ -1,4 +1,7 @@
-* TODO Add dired binding
+* DONE Add dired binding
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2022-04-20 Wed 10:47]
+:END:
 * TODO Rework todo workflow
 It really isn't working atm
 * TODO Change face for todo headings

@@ -252,6 +252,17 @@ Set keybinds to move around windows and switch buffers
     "b r" '(revert-buffer :which-key "Revert Buffer"))
 #+end_src
 
+** Dired
+We need to create a binding to open dired
+#+begin_src emacs-lisp
+  (use-package dired-x
+    :straight (:type built-in)
+    :general
+    (dan/leader
+      "f d" '(dired :which-key "Dired")
+      "f D" '(dired-jump :which-key "Dired Current Folder")))
+#+end_src
+
 ** auctex
 #+begin_src emacs-lisp
   (use-package tex
