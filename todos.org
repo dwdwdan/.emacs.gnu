@@ -1,0 +1,4 @@
+* TODO Add dired binding
+* TODO Rework todo workflow
+It really isn't working atm
+* TODO Change face for todo headings
