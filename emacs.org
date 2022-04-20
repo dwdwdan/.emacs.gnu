@@ -640,3 +640,13 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (dashboard-setup-startup-hook))
 #+end_src
 
+** exec-path-from-shell
+For use in daemon mode starting with systemd, we need to set the path
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (when (daemonp)
+      (exec-path-from-shell-initialize)))
+#+end_src
+
+
