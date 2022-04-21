@@ -416,7 +416,11 @@ Org superstar is a package that turns the * in headers into nicer characters. Th
     (setq org-superstar-headline-bullets-list '("◉" "○")
           org-superstar-leading-bullet ?\s))
 #+end_src
-
+*** Export
+I don't want a html postamble
+#+begin_src emacs-lisp
+(setq org-html-postamble nil)
+#+end_src
 *** Htmlize
 Htmlize seems to be a depency to export to html properly.
 #+begin_src emacs-lisp
