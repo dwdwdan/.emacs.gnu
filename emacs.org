@@ -358,10 +358,12 @@ The mixed pitch package sets certain elements in a document to be fixed pitch an
 
 **** Todo and capture
 #+begin_src emacs-lisp
-    (setq org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")))
-    (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
-                               (,(concat org-directory "/todo.org") :maxlevel . 1)))
-    (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1)))
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")
+          (sequence "NO IDEA(h)" "KINDA(j)" "NEEDS PRACTICE(k)" "|" "GOT IT(l!)")))
+  (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
+                             (,(concat org-directory "/todo.org") :maxlevel . 1)))
+  (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1)))
 #+end_src
 
 Whenever I refile (archive) a todo, I want to save all buffers. By default emacs will simply move the item, but not save the files. This essentially means that if emacs is forced to shutdown the refile will not have happened.
