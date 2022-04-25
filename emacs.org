@@ -14,8 +14,7 @@ We don't want emacs to load it's default packaging system
 #+end_src
 
 ** Cosmetics
-We can tell emacs not to load the startup message, menu-bar etc in
-~early-init.el~ so it doesn't load them at all. 
+We can tell emacs not to load the startup message, menu-bar etc in ~early-init.el~ so it doesn't load them at all. 
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)
 
@@ -108,9 +107,17 @@ Simpler Macro for ~plist-put~. Stolen from [[https://emacs.stackexchange.com/a/3
 
 ** Fonts
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
-  (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12")
+  (defun dan/set-fonts (&optional frame)
+;; If frame is nil, we aren't in daemon mode, so don't need to select the frame
+    (when frame
+      (select-frame frame))
+    (set-face-attribute 'default nil :font "Jetbrainsmono-12")
+    (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
+    (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12"))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'dan/set-fonts)
+    (dan/set-fonts))
   #+end_src 
 
 ** Line Numbers
@@ -119,6 +126,13 @@ I like to have relative line numbers
   (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode)
 #+end_src
+
+** Visual Line Mode
+I prefer to use ~visual-line-mode~ rather than ~truncate-lines~. I think it looks nicer.
+#+begin_src emacs-lisp
+  (global-visual-line-mode 1)
+#+end_src
+
 
 ** General
 General is the package I use to set keybindings. We use the ~:keymaps 'override~ line so that my leader key isn't overwritten in certain modes. I spent ages trying to figure this out but [[https://emacs.stackexchange.com/a/52056][this stackexchange answer]] sorted it out for me.
@@ -246,6 +260,17 @@ Set keybinds to move around windows and switch buffers
     "b r" '(revert-buffer :which-key "Revert Buffer"))
 #+end_src
 
+** Dired
+We need to create a binding to open dired
+#+begin_src emacs-lisp
+  (use-package dired-x
+    :straight (:type built-in)
+    :general
+    (dan/leader
+      "f d" '(dired :which-key "Dired")
+      "f D" '(dired-jump :which-key "Dired Current Folder")))
+#+end_src
+
 ** auctex
 #+begin_src emacs-lisp
   (use-package tex
@@ -308,8 +333,6 @@ My org mode configuration is probably the largest section of my emacs configurat
         org-ellipsis " ▼"
         org-hide-emphasis-markers t
         org-log-into-drawer t
-        ;; org-startup-truncated nil means that truncate-lines will be enabled when loading an org buffer
-        org-startup-truncated nil 
         org-startup-with-latex-preview t)
 #+end_src
 
@@ -417,6 +440,49 @@ Org superstar is a package that turns the * in headers into nicer characters. Th
     :config
     (setq org-superstar-headline-bullets-list '("◉" "○")
           org-superstar-leading-bullet ?\s))
+#+end_src
+
+*** Export
+I don't want a html postamble
+#+begin_src emacs-lisp
+(setq org-html-postamble nil)
+#+end_src
+
+I want a command to export to html and send to my website
+#+begin_src emacs-lisp
+  (defconst server-name "server"
+    "A string representing the ssh location of the web server.
+                    For example, if you run `ssh user@123.456.789.123` to ssh into the server, `server-name` should be set to `user@123.456.789.123`")
+
+  (defconst server-website-location "/var/www/personal/"
+    "A string representing the file path on the web server where you wnat exported files to be stored.
+                     This should contain a trailing /")
+
+  (defconst web-address "https://dwdwdan.xyz/"
+    "A string representing the url to the web server. This should lead to the folder where exported files are stored
+                    This should contain a trailing /, as well as the protocol to be used")
+
+
+  (defun dan/export-to-html-server (&optional should-open-in-browser)
+    "Export the current org file to html and copy to web server.
+It will use the values of `server-name’, `server-website-location’ and `web-address’ to upload using scp.
+
+If invoked using a prefix argument or with SHOULD-OPEN-IN-BROWSER non-nil it will also open the exported file in a web browser using `browse-url-xdg-open'"
+    (interactive "P")
+    ;; org-html-export-to-html returns the exported file-name
+    (setq file-name (org-html-export-to-html))
+    ;; we use a big concat to form the command we need to run
+    (setq shell-command-to-run (concat "scp " file-name " " server-name ":" server-website-location file-name))
+    (shell-command shell-command-to-run)
+    (setq uploaded-web-address (concat web-address file-name))
+    ;; copy the web address it's available at to the clipboard
+    (kill-new uploaded-web-address)
+    (when should-open-in-browser
+      ;; if should-open-in-browser is non-nil, we want to open it
+      (browse-url-xdg-open uploaded-web-address))
+    ;; send a message to tell the user where to find it
+    (message (concat "Viewable at " uploaded-web-address ".
+  Address has been copied to clipboard.")))
 #+end_src
 *** Export
 I don't want a html postamble
@@ -608,3 +674,33 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
      '(("https://dansdinners.xyz/feed.xml" mine)
        ("https://planet.emacslife.com/atom.xml" emacs))))
 #+end_src
+
+** Dashboard
+[[github:emacs-dashboard/emacs-dashboard][Emacs Dashboard]] is a pretty dashboard for when emacs opens
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :init
+    (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+    :custom
+    (dashboard-projects-backend 'projectile)
+    (dashboard-items
+     '((projects . 5)
+       (agenda . 5)))
+    (dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
+    (dashboard-agenda-sort-strategy '(time-up todo-state-up))
+    (dashboard-startup-banner 'logo)
+    (dashboard-center-content t)
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
+
+** exec-path-from-shell
+For use in daemon mode starting with systemd, we need to set the path
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (when (daemonp)
+      (exec-path-from-shell-initialize)))
+#+end_src
+
+
