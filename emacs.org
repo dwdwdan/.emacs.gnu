@@ -621,6 +621,68 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
        ("https://planet.emacslife.com/atom.xml" emacs))))
 #+end_src
 
+** Mu4e
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :straight (:type built-in)
+    :load-path "/usr/share/emacs/site-lisp/mu4e"
+    :custom
+    (mu4e-change-filenames-when-moving t)
+    (mu4e-confirm-quit nil)
+    (mu4e-update-interval (* 10 60))
+    (mu4e-get-mail-command "mbsync -a")
+    (mu4e-maildir "~/.mail")
+
+    (mu4e-drafts-folder "/personal/Drafts")
+    (mu4e-sent-folder "/personal/Sent")
+    (mu4e-trash-folder "/personal/Deleted")
+    (mu4e-refile-folder "/personal/Archive")
+
+    (user-mail-address "dan.walters5@outlook.com")
+
+    (mu4e-maildir-shortcuts
+     '((:maildir "/personal/Inbox" :key ?i)))
+
+    (mu4e-bookmarks
+     '(( :name  "Unread messages"
+         :query "flag:unread AND NOT flag:trashed AND NOT maildir:/personal/Archive AND NOT maildir:/personal/Deleted"
+         :key ?u)
+       ( :name "Today's messages"
+         :query "date:today..now"
+         :key ?t)
+       ( :name "Last 7 days"
+         :query "date:7d..now"
+         :hide-unread t
+         :key ?w)
+       ( :name "Messages with images"
+         :query "mime:image/*"
+         :key ?p)))
+    (message-send-mail-function 'smtpmail-send-it)
+    (smtpmail-smtp-server "smtp.office365.com")
+    :general
+    (dan/leader
+     "o m" '(mu4e :which-key "Mail")
+     "o M" '(mu4e-compose-new :which-key "Compose Mail")))
+
+  (use-package org-msg
+    :init
+    (setq mail-user-agent 'mu4e-user-agent)
+    :custom
+    (org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil d:nil num:nil tex:dvipng")
+    (org-msg-startup "hidestars indent inlineimages")
+    (org-msg-convert-citation t)
+    :general
+    (dan/local-leader
+     :keymaps 'message-mode-map
+     "s" '(message-goto-subject :which-key "Subject")
+     "b" '(org-msg-goto-body :which-key "Body")
+     "a" '(org-msg-attach :which-key "Attach"))
+    )
+
+  (mu4e t)
+  (org-msg-mode)
+#+end_src
+
 ** Dashboard
 [[github:emacs-dashboard/emacs-dashboard][Emacs Dashboard]] is a pretty dashboard for when emacs opens
 #+begin_src emacs-lisp
@@ -648,5 +710,3 @@ For use in daemon mode starting with systemd, we need to set the path
     (when (daemonp)
       (exec-path-from-shell-initialize)))
 #+end_src
-
-
