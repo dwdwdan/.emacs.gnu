@@ -398,6 +398,17 @@ I want to archive into a datetree in ~gtd_archive.org~.
                               (expand-file-name "gtd_archive.org" gtd-dir)
                               "::datetree/"))
 #+end_src
+
+**** Capture
+Any captures should go into ~inbox.org~
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+        `(("t" "TODO [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\nCreated: %U"
+           :empty-lines 1
+           :immediate-finish t)))
+#+end_src
+
 *** Faces
 **** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
