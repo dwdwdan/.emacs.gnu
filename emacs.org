@@ -159,6 +159,8 @@ The most important package of all, the one that makes emacs actually useable.
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
     :config
+    (when (<= emacs-major-version 28)
+      (setq evil-undo-system 'undo-redo))
     (evil-mode 1))
 
   (use-package evil-collection
