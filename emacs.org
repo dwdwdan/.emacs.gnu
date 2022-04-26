@@ -360,6 +360,7 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
 *** GTD
   We want to add all gtd files to ~org-agenda-files~.
 #+begin_src emacs-lisp
+  (setq org-agenda-files nil)
   (dolist (file '("gtd.org" "inbox.org" "tickler.org"))
     (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
 #+end_src
