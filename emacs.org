@@ -377,6 +377,19 @@ These will be exclusive, if I can do it anywhere I have my laptop it will get th
                         ("@laptop" . ?l)
                         ("@wolves" . ?w)))
 #+end_src
+
+**** Keywords
+For todo keywords, I plan to use a similar system to [[http://members.optusnet.com.au/~charles57/GTD/gtd_workflow.html#sec-8][Charles Cave]]. These are mostly obvious as to what they mean, except for APPT, which is for things that have to happen at a certain time. NEXT is used for the next task to complete in a project.
+#+begin_src emacs-lisp
+  (setq org-todo-keywords '(("TODO(t)"
+                             "NEXT(n)"
+                             "STARTED(s)"
+                             "WAITING(w)"
+                             "APPT(a)"
+                             "|"
+                             "DONE(d)"
+                             "CANCELLED(c)")) 
+#+end_src
 *** Faces
 **** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
