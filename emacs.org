@@ -389,7 +389,7 @@ For todo keywords, I plan to use a similar system to [[http://members.optusnet.c
                              "APPT(a)"
                              "|"
                              "DONE(d)"
-                             "CANCELLED(c)")) 
+                             "CANCELLED(c)")))
 #+end_src
 
 **** Archiving
