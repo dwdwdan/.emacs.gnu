@@ -364,6 +364,19 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
     (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
 #+end_src
 
+**** Contexts
+Contexts will be implemented as tags starting with an @ symbol. I plan to have
+- @campus
+- @home
+- @laptop
+- @wolves
+These will be exclusive, if I can do it anywhere I have my laptop it will get the @laptop tag, if I have to be on campus @campus, at home @home, or in wolverhampton (my hometown) @wolves
+#+begin_src emacs-lisp
+  (setq org-tag-alist '(("@campus" . ?c)
+                        ("@home" . ?h)
+                        ("@laptop" . ?l)
+                        ("@wolves" . ?w)))
+#+end_src
 *** Faces
 **** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
