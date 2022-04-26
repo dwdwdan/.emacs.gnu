@@ -390,6 +390,14 @@ For todo keywords, I plan to use a similar system to [[http://members.optusnet.c
                              "DONE(d)"
                              "CANCELLED(c)")) 
 #+end_src
+
+**** Archiving
+I want to archive into a datetree in ~gtd_archive.org~.
+#+begin_src emacs-lisp
+  (setq org-archive-location (concat
+                              (expand-file-name "gtd_archive.org" gtd-dir)
+                              "::datetree/"))
+#+end_src
 *** Faces
 **** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
