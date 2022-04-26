@@ -401,7 +401,7 @@ I want to archive into a datetree in ~gtd_archive.org~.
 #+end_src
 
 **** Capture
-Any captures should go into ~inbox.org~
+Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid having to press ~C-c C-c~.
 #+begin_src emacs-lisp
   (setq org-capture-templates
         `(("t" "TODO [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
