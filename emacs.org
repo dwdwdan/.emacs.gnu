@@ -52,6 +52,9 @@ We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have
   (defconst config-dir "~/.emacs.gnu"
     "Emacs Configuration Directory. This is where emacs config
     files should be stored")
+
+  (defconst gtd-dir "~/Nextcloud/Org/GTD"
+  "Directory that files for GTD are stored.")
 #+end_src
 
 ** Straight.el
@@ -341,9 +344,8 @@ I want my org agenda to always start on the previous monday, and show 7 days (i.
 #+begin_src emacs-lisp
   (setq org-agenda-span 7
         org-agenda-start-on-weekday 1
-        org-agenda-start-day "+0d"
-        org-agenda-files `(,org-directory))
-#+end_src
+        org-agenda-start-day "+0d")
+  #+end_src
 
 I need the package ~evil-org~ to add evil keys to the agenda. I don't know why this isn't included in ~evil-collection~
 #+begin_src emacs-lisp
@@ -353,6 +355,13 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
     :config
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys))
+#+end_src
+
+*** GTD
+  We want to add all gtd files to ~org-agenda-files~.
+#+begin_src emacs-lisp
+  (dolist (file '("gtd.org" "inbox.org" "tickler.org"))
+    (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
 #+end_src
 
 *** Faces
