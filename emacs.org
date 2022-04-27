@@ -428,6 +428,25 @@ Here I'm assuming that I will have my laptop with me at any point.
                                       ((agenda)
                                        (alltodo "")))))
 #+end_src
+
+**** Refile
+We want to be able to refile from ~inbox.org~ to ~gtd.org~ and ~reference.org~
+#+begin_src emacs-lisp
+  ;; Allow org-refile to refile into top level headings.
+  ;; This is used to create a new project.
+  (setq org-refile-use-outline-path 'file
+        org-outline-path-complete-in-steps nil)
+
+  (setq org-refile-targets `((,(expand-file-name "gtd.org" gtd-dir) :maxlevel . 1)
+                             (,(expand-file-name "someday.org" gtd-dir) :maxlevel . 1)
+                             (,(expand-file-name "tickler.org" gtd-dir) :maxlevel . 1)))
+#+end_src
+
+Whenever I refile a todo, I want to save all buffers. By default emacs will simply move the item, but not save the files. This essentially means that if emacs is forced to shutdown the refile will not have happened.
+#+begin_src emacs-lisp
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+#+end_src
+
 *** Faces
 **** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
