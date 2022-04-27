@@ -411,6 +411,23 @@ Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid havi
            :immediate-finish t)))
 #+end_src
 
+**** Agenda
+Here I'm assuming that I will have my laptop with me at any point.
+#+begin_src emacs-lisp
+  (setq org-agenda-custom-commands '(("c" "Campus"
+                                      ((tags "@campus|@laptop")))
+                                     ("h" "Home"
+                                      ((tags "@home|@laptop")))
+                                     ("l" "Laptop"
+                                      ((tags "@laptop")))
+                                     ("w" "Wolves"
+                                      ((tags "@wolves|@laptop")))
+                                     ("n" "Next"
+                                      ((todo "NEXT")))
+                                     ("a" "All"
+                                      ((agenda)
+                                       (alltodo "")))))
+#+end_src
 *** Faces
 **** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
