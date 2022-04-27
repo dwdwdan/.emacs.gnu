@@ -53,7 +53,7 @@ We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have
     "Emacs Configuration Directory. This is where emacs config
     files should be stored")
 
-  (defconst gtd-dir "~/Nextcloud/Org/GTD"
+  (defconst gtd-dir "~/Nextcloud/Org"
   "Directory that files for GTD are stored.")
 #+end_src
 
