@@ -327,6 +327,13 @@ I don't want to actually show the compilation buffer, so we use this snippet whi
 (add-hook 'pdf-view-mode-hook 'auto-revert-mode 1)
 #+end_src
 
+*** Reftex
+#+begin_src emacs-lisp
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (setq reftex-plug-into-AUCTeX t)
+#+end_src
+
+
 ** org
 My org mode configuration is probably the largest section of my emacs configuration.
 
