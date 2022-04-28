@@ -162,6 +162,8 @@ The most important package of all, the one that makes emacs actually useable.
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
     :config
+    (when (<= emacs-major-version 28)
+      (setq evil-undo-system 'undo-redo))
     (evil-mode 1))
 
   (use-package evil-collection
@@ -562,6 +564,49 @@ If invoked using a prefix argument or with SHOULD-OPEN-IN-BROWSER non-nil it wil
     (message (concat "Viewable at " uploaded-web-address ".
   Address has been copied to clipboard.")))
 #+end_src
+
+*** Export
+I don't want a html postamble
+#+begin_src emacs-lisp
+(setq org-html-postamble nil)
+#+end_src
+
+I want a command to export to html and send to my website
+#+begin_src emacs-lisp
+  (defconst server-name "server"
+    "A string representing the ssh location of the web server.
+                    For example, if you run `ssh user@123.456.789.123` to ssh into the server, `server-name` should be set to `user@123.456.789.123`")
+
+  (defconst server-website-location "/var/www/personal/"
+    "A string representing the file path on the web server where you wnat exported files to be stored.
+                     This should contain a trailing /")
+
+  (defconst web-address "https://dwdwdan.xyz/"
+    "A string representing the url to the web server. This should lead to the folder where exported files are stored
+                    This should contain a trailing /, as well as the protocol to be used")
+
+
+  (defun dan/export-to-html-server (&optional should-open-in-browser)
+    "Export the current org file to html and copy to web server.
+It will use the values of `server-name’, `server-website-location’ and `web-address’ to upload using scp.
+
+If invoked using a prefix argument or with SHOULD-OPEN-IN-BROWSER non-nil it will also open the exported file in a web browser using `browse-url-xdg-open'"
+    (interactive "P")
+    ;; org-html-export-to-html returns the exported file-name
+    (setq file-name (org-html-export-to-html))
+    ;; we use a big concat to form the command we need to run
+    (setq shell-command-to-run (concat "scp " file-name " " server-name ":" server-website-location file-name))
+    (shell-command shell-command-to-run)
+    (setq uploaded-web-address (concat web-address file-name))
+    ;; copy the web address it's available at to the clipboard
+    (kill-new uploaded-web-address)
+    (when should-open-in-browser
+      ;; if should-open-in-browser is non-nil, we want to open it
+      (browse-url-xdg-open uploaded-web-address))
+    ;; send a message to tell the user where to find it
+    (message (concat "Viewable at " uploaded-web-address ".
+  Address has been copied to clipboard.")))
+#+end_src
 *** Export
 I don't want a html postamble
 #+begin_src emacs-lisp
@@ -753,6 +798,68 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
        ("https://planet.emacslife.com/atom.xml" emacs))))
 #+end_src
 
+** Mu4e
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :straight (:type built-in)
+    :load-path "/usr/share/emacs/site-lisp/mu4e"
+    :custom
+    (mu4e-change-filenames-when-moving t)
+    (mu4e-confirm-quit nil)
+    (mu4e-update-interval (* 10 60))
+    (mu4e-get-mail-command "mbsync -a")
+    (mu4e-maildir "~/.mail")
+
+    (mu4e-drafts-folder "/personal/Drafts")
+    (mu4e-sent-folder "/personal/Sent")
+    (mu4e-trash-folder "/personal/Deleted")
+    (mu4e-refile-folder "/personal/Archive")
+
+    (user-mail-address "dan.walters5@outlook.com")
+
+    (mu4e-maildir-shortcuts
+     '((:maildir "/personal/Inbox" :key ?i)))
+
+    (mu4e-bookmarks
+     '(( :name  "Unread messages"
+         :query "flag:unread AND NOT flag:trashed AND NOT maildir:/personal/Archive AND NOT maildir:/personal/Deleted"
+         :key ?u)
+       ( :name "Today's messages"
+         :query "date:today..now"
+         :key ?t)
+       ( :name "Last 7 days"
+         :query "date:7d..now"
+         :hide-unread t
+         :key ?w)
+       ( :name "Messages with images"
+         :query "mime:image/*"
+         :key ?p)))
+    (message-send-mail-function 'smtpmail-send-it)
+    (smtpmail-smtp-server "smtp.office365.com")
+    :general
+    (dan/leader
+     "o m" '(mu4e :which-key "Mail")
+     "o M" '(mu4e-compose-new :which-key "Compose Mail")))
+
+  (use-package org-msg
+    :init
+    (setq mail-user-agent 'mu4e-user-agent)
+    :custom
+    (org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil d:nil num:nil tex:dvipng")
+    (org-msg-startup "hidestars indent inlineimages")
+    (org-msg-convert-citation t)
+    :general
+    (dan/local-leader
+     :keymaps 'message-mode-map
+     "s" '(message-goto-subject :which-key "Subject")
+     "b" '(org-msg-goto-body :which-key "Body")
+     "a" '(org-msg-attach :which-key "Attach"))
+    )
+
+  (mu4e t)
+  (org-msg-mode)
+#+end_src
+
 ** Dashboard
 [[github:emacs-dashboard/emacs-dashboard][Emacs Dashboard]] is a pretty dashboard for when emacs opens
 #+begin_src emacs-lisp
@@ -780,5 +887,3 @@ For use in daemon mode starting with systemd, we need to set the path
     (when (daemonp)
       (exec-path-from-shell-initialize)))
 #+end_src
-
-
