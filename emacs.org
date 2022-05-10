@@ -573,7 +573,12 @@ Company mode is my completion engine, mainly because I don't know of any others.
           company-minimum-prefix-length 1)
     :custom-face
     (company-tooltip
-     ((t (:family "JetBrainsmono")))))
+     ((t (:family "JetBrainsmono"))))
+    :bind
+    (:map company-active-map
+          ("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common)))
 #+end_src
 
 ** YASnippets
