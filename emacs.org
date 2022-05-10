@@ -770,3 +770,23 @@ For use in daemon mode starting with systemd, we need to set the path
     (when (daemonp)
       (exec-path-from-shell-initialize)))
 #+end_src
+
+** LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :config
+    (lsp-enable-which-key-integration t)) 
+
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode))
+
+  (setq lsp-ui-doc-show-with-cursor t
+        lsp-ui-sideline-enable t)
+
+  (dolist (mode '(python-mode-hook
+                  LaTeX-mode-hook))
+    (add-hook mode 'lsp-deferred))
+#+end_src
+
