@@ -22,6 +22,7 @@ We can tell emacs not to load the startup message, menu-bar etc in ~early-init.e
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
 
+  (setq ring-bell-function 'ignore)
 #+end_src
 
 * Init.el
