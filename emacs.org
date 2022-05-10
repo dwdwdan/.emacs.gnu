@@ -579,6 +579,9 @@ Company mode is my completion engine, mainly because I don't know of any others.
           ("<tab>" . company-complete-selection))
     (:map lsp-mode-map
           ("<tab>" . company-indent-or-complete-common)))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 #+end_src
 
 ** YASnippets
