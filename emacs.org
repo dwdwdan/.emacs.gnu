@@ -456,6 +456,34 @@ Whenever I refile a todo, I want to save all buffers. By default emacs will simp
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 
+**** Mappings
+We need easier mappings to archive, refile etc:
+#+begin_src emacs-lisp
+  (dan/local-leader
+    :keymaps 'org-mode-map
+    "a" '(org-archive-subtree :which-key "Archive")
+    "r" '(org-refile :which-key "Refile")
+    "c" '(org-clock-in :which-key "Clock in"))
+  #+end_src
+
+  We want a clock out command to be global
+#+begin_src emacs-lisp
+  (dan/leader
+    "n c" '(org-clock-out :which-key "Clock out"))
+#+end_src
+
+We also want a global mapping to go to the inbox, used when I want to review and file it.
+#+begin_src emacs-lisp
+  (defun dan/go-to-inbox ()
+    (interactive)
+    (find-file (expand-file-name "inbox.org" gtd-dir)))
+
+  (dan/leader
+    "o i" '(dan/go-to-inbox :which-key "Inbox"))
+#+end_src
+
+
+
 *** Faces
 **** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
@@ -495,8 +523,8 @@ So far I just have org capture bound outside of org mode itself, though I may ad
 #+begin_src emacs-lisp
   (dan/leader
     "n" '(:ignore t :which-key "Notes")
-    "n n" '(org-capture :which-key "Org Capture")
-    "n c" '(org-capture :which-key "Org Capture"))
+    "n n" '(org-capture :which-key "Org Capture"))
+  
   (dan/local-leader
     :keymaps 'org-mode-map
     "T" '(org-babel-tangle :which-key "Tangle")
