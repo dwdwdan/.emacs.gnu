@@ -25,6 +25,13 @@ We can tell emacs not to load the startup message, menu-bar etc in ~early-init.e
   (setq ring-bell-function 'ignore)
 #+end_src
 
+** Native compilation
+We don't want to show any warnings from native-comp. Otherwise we get random popups when a new package is installed etc. We do log them though.
+#+begin_src emacs-lisp
+(setq native-comp-async-report-warnings-errors 'silent)
+#+end_src
+
+
 * Init.el
 :PROPERTIES:
 :header-args: :tangle init.el
