@@ -493,6 +493,13 @@ I don't want a html postamble
 (setq org-html-postamble nil)
 #+end_src
 
+I want to use my default CSS by default:
+#+begin_src emacs-lisp
+  (setq org-html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://dwdwdan.github.io/org-html/css.css\"/>
+  <script type=\"text/javascript\" src=\"https://dwdwdan.github.io/org-html/js.js\"></script>")
+#+end_src
+
+
 I want a command to export to html and send to my website
 #+begin_src emacs-lisp
   (defconst server-name "server"
