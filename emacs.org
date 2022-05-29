@@ -316,7 +316,9 @@ We need to create a binding to open dired
     :straight auctex
     :config
     (setq TeX-auto-save t)
-    (setq TeX-parse-self t))
+    (setq TeX-parse-self t)
+    :hook
+    (LaTeX-mode . LaTeX-math-mode))
 #+end_src
 
 *** Auto Compiling
