@@ -60,6 +60,9 @@ We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have
   (defconst config-dir "~/.emacs.gnu"
     "Emacs Configuration Directory. This is where emacs config
     files should be stored")
+
+  (defconst gtd-dir "~/Nextcloud/Org"
+  "Directory that files for GTD are stored.")
 #+end_src
 
 ** Straight.el
@@ -353,13 +356,126 @@ My org mode configuration is probably the largest section of my emacs configurat
         org-startup-with-latex-preview t)
 #+end_src
 
-*** Agenda
+*** GTD
+**** Files that I'm using
+- ~inbox.org~ is where all my captures go. It is intended to be reviewed often, and tasks should not sit here for long
+- ~gtd.org~ is the main file for near-future todos. It has top level headings for projects, and a special project called ~single tasks~ for any tasks that don't fit.
+- ~someday.org~ is structured the same as ~gtd.org~ but is for tasks that I don't plan to do in the short term
+- ~tickler.org~ is for tasks that have a scheduled date in the far future
+- ~reference.org~ is for reference materials, or for any articles I want to keep filed
+- ~gtd_archive.org~ is where completed or cancelled tasks get archived
+- ~recipeIdeas.org~ is for recipe ideas that I come up with
+
+**** Contexts
+Contexts will be implemented as tags starting with an @ symbol. I plan to have
+- @campus
+- @home
+- @laptop
+- @wolves
+These will be exclusive, if I can do it anywhere I have my laptop it will get the @laptop tag, if I have to be on campus @campus, at home @home, or in wolverhampton (my hometown) @wolves
+#+begin_src emacs-lisp
+  (setq org-tag-alist '(("@campus" . ?c)
+                        ("@home" . ?h)
+                        ("@laptop" . ?l)
+                        ("@wolves" . ?w)))
+#+end_src
+
+**** Keywords
+For todo keywords, I plan to use a similar system to [[http://members.optusnet.com.au/~charles57/GTD/gtd_workflow.html#sec-8][Charles Cave]]. These are mostly obvious as to what they mean, except for APPT, which is for things that have to happen at a certain time. NEXT is used for the next task to complete in a project.
+#+begin_src emacs-lisp
+  (setq org-todo-keywords '((sequence
+                             "TODO(t)"
+                             "NEXT(n)"
+                             "STARTED(s)"
+                             "WAITING(w)"
+                             "APPT(a)"
+                             "|"
+                             "DONE(d)"
+                             "CANCELLED(c)")))
+#+end_src
+
+**** Archiving
+I want to archive into a datetree in ~gtd_archive.org~.
+#+begin_src emacs-lisp
+  (setq org-archive-location (concat
+                              (expand-file-name "gtd_archive.org" gtd-dir)
+                              "::datetree/"))
+#+end_src
+
+**** Capture
+Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid having to press ~C-c C-c~.
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+  ;; First, a standard template that just takes a string
+        `(("t" "TODO [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\nCreated: %U"
+           :empty-lines 1
+           :immediate-finish t)
+  ;; An email capture template, for use with mu4e. It is blocked from being used elsewhere by org-capture-templates-contexts below.
+          ("m" "MAIL [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\n%:from: %a\nCreated:%U"
+           :empty-lines 1
+           :immediate-finish t)
+  ;; A file capture template, which additionally attaches a link to the current location.
+          ("f" "TODO (File) [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\n%a\nCreated: %U"
+           :empty-lines 1
+           :immediate-finish t)))
+  #+end_src
+
+  We use ~org-capture-templates-contexts~ to prevent me from trying to capture an email when not in mu4e.
+#+begin_src emacs-lisp
+  (setq org-capture-templates-contexts
+        '(("m" ((in-mode . "mu4e-headers-mode")
+                (in-mode . "mu4e-view-mode")))))
+#+end_src
+
+**** Agenda
+My agenda view will probably need adjusting, it may be a good idea to add [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] to better split tasks based on project priority.
+
+***** Agenda Files
+We want to add all gtd files to ~org-agenda-files~.
+#+begin_src emacs-lisp
+  (setq org-agenda-files nil)
+  (dolist (file '("gtd.org" "inbox.org" "tickler.org"))
+    (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
+#+end_src
+
+***** Commands
+I want an agenda command for each context I could be in. I'm assuming that I'll always have my laptop on me (which I must do if I'm using emacs).
+#+begin_src emacs-lisp
+  (setq org-agenda-custom-commands '(("c" "Campus"
+                                      ((tags "@campus|@laptop")))
+                                     ("h" "Home"
+                                      ((tags "@home|@laptop")))
+                                     ("l" "Laptop"
+                                      ((tags "@laptop")))
+                                     ("w" "Wolves"
+                                      ((tags "@wolves|@laptop")))
+                                     ("n" "Next"
+                                      ((todo "NEXT")))
+                                     ("a" "All"
+                                      ((agenda)
+                                       (alltodo "")))))
+#+end_src
+
+***** Cosmetics
+I need to turn of ~display-line-numbers-mode~ in the agenda, so tags appear on the right, rather than on the next line:
+#+begin_src emacs-lisp
+  (add-hook 'org-agenda-mode-hook '(lambda()
+                                     (display-line-numbers-mode -1)))
+#+end_src
+
+I want my org agenda to always start on the previous monday, and show 7 days (i.e. show the full current week). 
 #+begin_src emacs-lisp
   (setq org-agenda-span 7
         org-agenda-start-on-weekday 1
-        org-agenda-start-day "+0d"
-        org-agenda-files `(,org-directory))
+        org-agenda-start-day "+0d")
+  #+end_src
 
+***** Keybindings
+I need the package ~evil-org~ to add evil keys to the agenda. I don't know why this isn't included in ~evil-collection~
+#+begin_src emacs-lisp
   (use-package evil-org
     :after org
     :hook (org-mode . evil-org-mode)
@@ -368,14 +484,57 @@ My org mode configuration is probably the largest section of my emacs configurat
     (evil-org-agenda-set-keys))
 #+end_src
 
+**** Refile
+We want to be able to refile from ~inbox.org~ to any of my files, including ~gtd.org~, ~someday.org~ and ~reference.org~
+#+begin_src emacs-lisp
+    ;; Allow org-refile to refile into top level headings.
+    ;; This is used to create a new project.
+    (setq org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil)
 
+    (setq org-refile-targets `((,(expand-file-name "gtd.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "someday.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "tickler.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "recipeIdeas.org" gtd-dir) :maxlevel . 1)
+                             (,(expand-file-name "reference.org" gtd-dir) :maxlevel . 1)))
+#+end_src
+
+Whenever I refile a todo, I want to save all buffers. By default emacs will simply move the item, but not save the files. This essentially means that if emacs is forced to shutdown the refile will not have happened.
 #+begin_src emacs-lisp
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 
-*** Faces
+**** Mappings
+We need easier mappings to archive, refile etc:
 #+begin_src emacs-lisp
-  (defun dan/org-config ()
+  (dan/local-leader
+    :keymaps 'org-mode-map
+    "a" '(org-archive-subtree :which-key "Archive")
+    "r" '(org-refile :which-key "Refile")
+    "c" '(org-clock-in :which-key "Clock in"))
+  #+end_src
+
+  We want a clock out command to be global
+#+begin_src emacs-lisp
+  (dan/leader
+    "n c" '(org-clock-out :which-key "Clock out"))
+#+end_src
+
+We also want a global mapping to go to the inbox, used when I want to review and file it.
+#+begin_src emacs-lisp
+  (defun dan/go-to-inbox ()
+    (interactive)
+    (find-file (expand-file-name "inbox.org" gtd-dir)))
+
+  (dan/leader
+    "o i" '(dan/go-to-inbox :which-key "Inbox"))
+#+end_src
+
+*** Faces
+**** Heading Size
+First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
     (dolist (face '((org-document-title . 3.0)
                     (org-level-1 . 1.5)
                     (org-level-2 . 1.4)
@@ -386,47 +545,38 @@ My org mode configuration is probably the largest section of my emacs configurat
                     (org-level-7 . 1.1)
                     (org-level-8 . 1.05)))
       (set-face-attribute (car face) nil :weight 'bold :height (cdr face))))
-
 #+end_src
 
+**** Mixed Pitch
+The mixed pitch package sets certain elements in a document to be fixed pitch and others to variable. This is very useful in org mode, so I can have a variable pitch font for most of the body, but a fixed pitch font for code blocks.
 #+begin_src emacs-lisp
-(use-package mixed-pitch)
+  (use-package mixed-pitch
+  :hook (org-mode . mixed-pitch-mode))
 #+end_src
 
-#+begin_src emacs-lisp
-    (setq org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)")))
-    (setq org-refile-targets `((,(concat org-directory "/archive.org") :maxlevel . 2)
-                               (,(concat org-directory "/todo.org") :maxlevel . 1)))
-    (setq org-capture-templates `(("t" "Todo" entry (file ,(concat org-directory "/inbox.org")) "* TODO %?\n %U\n %a\n %i" :empty-lines 1)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun dan/org-hook ()
-    (mixed-pitch-mode 1)
-    (org-indent-mode)
-    (display-line-numbers-mode -1))
-#+end_src
-
-*** Mappings and use-package
-This block actually requires org mode, activates the hook, and adds mappings. So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
+*** Use-package
+This block actually requires org mode and activates the hooks.
 #+begin_src emacs-lisp
   (use-package org
     :straight (:type built-in)
     :hook
-    (org-mode . dan/org-hook)
-    :general
-    (dan/leader
-      "n" '(:ignore t :which-key "Notes")
-      "n n" '(org-capture :which-key "Org Capture")
-      "n c" '(org-capture :which-key "Org Capture"))
-    (dan/local-leader
-      :keymaps 'org-mode-map
-      "T" '(org-babel-tangle :which-key "Tangle")
-      "e" '(org-export-dispatch :which-key "Export")
-      "l" '(org-insert-link :which-key "Insert Link")
-      "t" '(org-todo :which-key "Todo"))
-    :config
-    (dan/org-config))
+    (org-mode . org-indent-mode)
+    (org-mode . (lambda() (display-line-numbers-mode -1))))
+#+end_src
+
+*** Mappings
+So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
+#+begin_src emacs-lisp
+  (dan/leader
+    "n" '(:ignore t :which-key "Notes")
+    "n n" '(org-capture :which-key "Org Capture"))
+  
+  (dan/local-leader
+    :keymaps 'org-mode-map
+    "T" '(org-babel-tangle :which-key "Tangle")
+    "e" '(org-export-dispatch :which-key "Export")
+    "l" '(org-insert-link :which-key "Insert Link")
+    "t" '(org-todo :which-key "Todo"))
 #+end_src
 
 *** Fragtog
@@ -441,6 +591,7 @@ We also want to scale up latex renders to better match the font size
   (with-eval-after-load 'org
     (setq-plist-put org-format-latex-options :scale 1.5))
 #+end_src
+
 *** Superstar
 Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
 #+begin_src emacs-lisp
@@ -457,6 +608,13 @@ I don't want a html postamble
 #+begin_src emacs-lisp
 (setq org-html-postamble nil)
 #+end_src
+
+I want to use my default CSS by default:
+#+begin_src emacs-lisp
+  (setq org-html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://dwdwdan.github.io/org-html/css.css\"/>
+  <script type=\"text/javascript\" src=\"https://dwdwdan.github.io/org-html/js.js\"></script>")
+#+end_src
+
 
 I want a command to export to html and send to my website
 #+begin_src emacs-lisp
@@ -502,7 +660,7 @@ Htmlize seems to be a depency to export to html properly.
 #+end_src
 
 *** Auto Tangle
-org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_tangle:~ option to non-nil.
+org-auto-tangle will automatically tangle an org file if it has ~#+auto_tangle~ set to ~t~
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
     :hook
@@ -510,6 +668,7 @@ org-auto-tangle does what it says on the tin, if an org file sets the ~#+auto_ta
 #+end_src
 
 *** Publish
+I use org publish to publish my emacs config to my website.
 #+begin_src emacs-lisp
   (setq org-publish-project-alist (list
                                    (list "emacs config"
@@ -552,21 +711,6 @@ github:user/repo#45
 
   (use-package helm-projectile
     :after projectile)
-
-
-  (defun dan/existing-org-projectile-todo-files ()
-    (setq existing-files nil)
-    (dolist (todo-file (org-projectile-todo-files) existing-files)
-      (when (file-exists-p todo-file)
-        (setq existing-files (cons todo-file existing-files)))))
-
-  (use-package org-projectile
-    :config
-    (org-projectile-per-project)
-    (setq org-projectile-per-project-filepath "todos.org")
-    (setq org-agenda-files (append org-agenda-files (dan/existing-org-projectile-todo-files)))
-    (push (org-projectile-project-todo-entry) org-capture-templates)
-    )
 #+end_src
 
 ** Company Mode
@@ -720,8 +864,11 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (smtpmail-smtp-server "smtp.office365.com")
     :general
     (dan/leader
-     "o m" '(mu4e :which-key "Mail")
-     "o M" '(mu4e-compose-new :which-key "Compose Mail")))
+      "o m" '(mu4e :which-key "Mail")
+      "o M" '(mu4e-compose-new :which-key "Compose Mail"))
+    (dan/leader
+      :keymaps '(mu4e-headers-view mu4e-view-mode)
+      "n n" '(mu4e-org-store-and-capture :which-key "Org Capture")))
 
   (use-package org-msg
     :init
@@ -732,10 +879,10 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (org-msg-convert-citation t)
     :general
     (dan/local-leader
-     :keymaps 'message-mode-map
-     "s" '(message-goto-subject :which-key "Subject")
-     "b" '(org-msg-goto-body :which-key "Body")
-     "a" '(org-msg-attach :which-key "Attach"))
+      :keymaps 'message-mode-map
+      "s" '(message-goto-subject :which-key "Subject")
+      "b" '(org-msg-goto-body :which-key "Body")
+      "a" '(org-msg-attach :which-key "Attach"))
     )
 
   (mu4e t)
