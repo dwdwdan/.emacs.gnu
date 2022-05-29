@@ -410,7 +410,18 @@ Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid havi
         `(("t" "TODO [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
            "* TODO %^{Description}\nCreated: %U"
            :empty-lines 1
+           :immediate-finish t)
+          ("m" "MAIL [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\n%:from: %a\nCreated:%U"
+           :empty-lines 1
            :immediate-finish t)))
+  #+end_src
+
+  We use ~org-capture-templates-contexts~ to prevent me from trying to capture an email when not in mu4e.
+#+begin_src emacs-lisp
+  (setq org-capture-templates-contexts
+        '(("m" ((in-mode . "mu4e-headers-mode")
+                (in-mode . "mu4e-view-mode")))))
 #+end_src
 
 **** Agenda
