@@ -441,14 +441,16 @@ I also need to turn of ~display-line-numbers-mode~ in the agenda, so tags appear
 **** Refile
 We want to be able to refile from ~inbox.org~ to ~gtd.org~ and ~reference.org~
 #+begin_src emacs-lisp
-  ;; Allow org-refile to refile into top level headings.
-  ;; This is used to create a new project.
-  (setq org-refile-use-outline-path 'file
-        org-outline-path-complete-in-steps nil)
+    ;; Allow org-refile to refile into top level headings.
+    ;; This is used to create a new project.
+    (setq org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil)
 
-  (setq org-refile-targets `((,(expand-file-name "gtd.org" gtd-dir) :maxlevel . 1)
-                             (,(expand-file-name "someday.org" gtd-dir) :maxlevel . 1)
-                             (,(expand-file-name "tickler.org" gtd-dir) :maxlevel . 1)))
+    (setq org-refile-targets `((,(expand-file-name "gtd.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "someday.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "tickler.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "recipeIdeas.org" gtd-dir) :maxlevel . 1)
+                             (,(expand-file-name "reference.org" gtd-dir) :maxlevel . 1)))
 #+end_src
 
 Whenever I refile a todo, I want to save all buffers. By default emacs will simply move the item, but not save the files. This essentially means that if emacs is forced to shutdown the refile will not have happened.
