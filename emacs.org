@@ -319,7 +319,8 @@ We need to create a binding to open dired
     (setq TeX-parse-self t)
     (setq preview-scale-function 1.4)
     :hook
-    (LaTeX-mode . LaTeX-math-mode))
+    (LaTeX-mode . LaTeX-math-mode)
+    (LaTeX-mode . TeX-source-correlate-mode))
 #+end_src
 
 *** Auto Compiling
