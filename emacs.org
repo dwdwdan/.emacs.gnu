@@ -201,6 +201,13 @@ Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am
       "g" '(magit :which-key "Magit"))
     :hook
     (with-editor-mode . evil-insert-state))
+  #+end_src
+
+  I use a tiling WM, so ediff creating new frames is really annoying. Therefore we can disable it here.
+  #+begin_src emacs-lisp
+  (use-package ediff
+    :custom
+    (ediff-window-setup-function 'ediff-setup-windows-plain))
 #+end_src
 
 ** Which-key
