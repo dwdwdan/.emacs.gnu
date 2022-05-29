@@ -321,6 +321,7 @@ We need to create a binding to open dired
     (setq preview-auto-reveal t)
     :hook
     (LaTeX-mode . LaTeX-math-mode)
+    (LaTeX-mode . mixed-pitch-mode)
     (LaTeX-mode . TeX-source-correlate-mode))
 #+end_src
 
