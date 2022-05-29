@@ -341,32 +341,7 @@ My org mode configuration is probably the largest section of my emacs configurat
         org-startup-with-latex-preview t)
 #+end_src
 
-*** Agenda
-I want my org agenda to always start on the previous monday, and show 7 days (i.e. show the full current week). I also want agenda to read from any file in my org directory.
-#+begin_src emacs-lisp
-  (setq org-agenda-span 7
-        org-agenda-start-on-weekday 1
-        org-agenda-start-day "+0d")
-  #+end_src
-
-I need the package ~evil-org~ to add evil keys to the agenda. I don't know why this isn't included in ~evil-collection~
-#+begin_src emacs-lisp
-  (use-package evil-org
-    :after org
-    :hook (org-mode . evil-org-mode)
-    :config
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
-#+end_src
-
 *** GTD
-  We want to add all gtd files to ~org-agenda-files~.
-#+begin_src emacs-lisp
-  (setq org-agenda-files nil)
-  (dolist (file '("gtd.org" "inbox.org" "tickler.org"))
-    (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
-#+end_src
-
 **** Contexts
 Contexts will be implemented as tags starting with an @ symbol. I plan to have
 - @campus
@@ -407,14 +382,17 @@ I want to archive into a datetree in ~gtd_archive.org~.
 Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid having to press ~C-c C-c~.
 #+begin_src emacs-lisp
   (setq org-capture-templates
+  ;; First, a standard template that just takes a string
         `(("t" "TODO [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
            "* TODO %^{Description}\nCreated: %U"
            :empty-lines 1
            :immediate-finish t)
+  ;; An email capture template, for use with mu4e. It is blocked from being used elsewhere by org-capture-templates-contexts below.
           ("m" "MAIL [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
            "* TODO %^{Description}\n%:from: %a\nCreated:%U"
            :empty-lines 1
            :immediate-finish t)
+  ;; A file capture template, which additionally attaches a link to the current location.
           ("f" "TODO (File) [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
            "* TODO %^{Description}\n%a\nCreated: %U"
            :empty-lines 1
@@ -429,7 +407,18 @@ Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid havi
 #+end_src
 
 **** Agenda
-Here I'm assuming that I will have my laptop with me at any point.
+My agenda view will probably need adjusting, it may be a good idea to add [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] to better split tasks based on project priority.
+
+***** Agenda Files
+We want to add all gtd files to ~org-agenda-files~.
+#+begin_src emacs-lisp
+  (setq org-agenda-files nil)
+  (dolist (file '("gtd.org" "inbox.org" "tickler.org"))
+    (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
+#+end_src
+
+***** Commands
+I want an agenda command for each context I could be in. I'm assuming that I'll always have my laptop on me (which I must do if I'm using emacs).
 #+begin_src emacs-lisp
   (setq org-agenda-custom-commands '(("c" "Campus"
                                       ((tags "@campus|@laptop")))
@@ -446,15 +435,33 @@ Here I'm assuming that I will have my laptop with me at any point.
                                        (alltodo "")))))
 #+end_src
 
-I also need to turn of ~display-line-numbers-mode~ in the agenda, so tags appear on the right, rather than on the next line:
+***** Cosmetics
+I need to turn of ~display-line-numbers-mode~ in the agenda, so tags appear on the right, rather than on the next line:
 #+begin_src emacs-lisp
   (add-hook 'org-agenda-mode-hook '(lambda()
                                      (display-line-numbers-mode -1)))
 #+end_src
 
+I want my org agenda to always start on the previous monday, and show 7 days (i.e. show the full current week). 
+#+begin_src emacs-lisp
+  (setq org-agenda-span 7
+        org-agenda-start-on-weekday 1
+        org-agenda-start-day "+0d")
+  #+end_src
+
+***** Keybindings
+I need the package ~evil-org~ to add evil keys to the agenda. I don't know why this isn't included in ~evil-collection~
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :after org
+    :hook (org-mode . evil-org-mode)
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+#+end_src
 
 **** Refile
-We want to be able to refile from ~inbox.org~ to ~gtd.org~ and ~reference.org~
+We want to be able to refile from ~inbox.org~ to any of my files, including ~gtd.org~, ~someday.org~ and ~reference.org~
 #+begin_src emacs-lisp
     ;; Allow org-refile to refile into top level headings.
     ;; This is used to create a new project.
@@ -498,8 +505,6 @@ We also want a global mapping to go to the inbox, used when I want to review and
   (dan/leader
     "o i" '(dan/go-to-inbox :which-key "Inbox"))
 #+end_src
-
-
 
 *** Faces
 **** Heading Size
