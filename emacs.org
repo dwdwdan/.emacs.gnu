@@ -871,8 +871,11 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (smtpmail-smtp-server "smtp.office365.com")
     :general
     (dan/leader
-     "o m" '(mu4e :which-key "Mail")
-     "o M" '(mu4e-compose-new :which-key "Compose Mail")))
+      "o m" '(mu4e :which-key "Mail")
+      "o M" '(mu4e-compose-new :which-key "Compose Mail"))
+    (dan/leader
+      :keymaps '(mu4e-headers-view mu4e-view-mode)
+      "n n" '(mu4e-org-store-and-capture :which-key "Org Capture")))
 
   (use-package org-msg
     :init
@@ -883,10 +886,10 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (org-msg-convert-citation t)
     :general
     (dan/local-leader
-     :keymaps 'message-mode-map
-     "s" '(message-goto-subject :which-key "Subject")
-     "b" '(org-msg-goto-body :which-key "Body")
-     "a" '(org-msg-attach :which-key "Attach"))
+      :keymaps 'message-mode-map
+      "s" '(message-goto-subject :which-key "Subject")
+      "b" '(org-msg-goto-body :which-key "Body")
+      "a" '(org-msg-attach :which-key "Attach"))
     )
 
   (mu4e t)
