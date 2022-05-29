@@ -342,6 +342,15 @@ My org mode configuration is probably the largest section of my emacs configurat
 #+end_src
 
 *** GTD
+**** Files that I'm using
+- ~inbox.org~ is where all my captures go. It is intended to be reviewed often, and tasks should not sit here for long
+- ~gtd.org~ is the main file for near-future todos. It has top level headings for projects, and a special project called ~single tasks~ for any tasks that don't fit.
+- ~someday.org~ is structured the same as ~gtd.org~ but is for tasks that I don't plan to do in the short term
+- ~tickler.org~ is for tasks that have a scheduled date in the far future
+- ~reference.org~ is for reference materials, or for any articles I want to keep filed
+- ~gtd_archive.org~ is where completed or cancelled tasks get archived
+- ~recipeIdeas.org~ is for recipe ideas that I come up with
+
 **** Contexts
 Contexts will be implemented as tags starting with an @ symbol. I plan to have
 - @campus
