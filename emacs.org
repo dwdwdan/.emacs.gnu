@@ -286,6 +286,19 @@ Set keybinds to move around windows and switch buffers
     "b r" '(revert-buffer :which-key "Revert Buffer"))
 #+end_src
 
+*** Winner Mode
+Winner mode is a minor mode that keeps track of window movements, and gives the ability to undo them. I mostly use it to give me the ability to maximise a window.
+#+begin_src emacs-lisp
+  (use-package winner
+    :config
+    (winner-mode)
+    :general
+    (dan/leader
+      "w H" '(winner-undo :which-key "Undo Window Movement")
+      "w L" '(winner-redo :which-key "Redo Window Movement")
+      "w m" '(delete-other-windows :which-key "Maximise Window")))
+#+end_src
+
 ** Dired
 We need to create a binding to open dired
 #+begin_src emacs-lisp
