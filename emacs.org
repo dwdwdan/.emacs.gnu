@@ -228,6 +228,12 @@ I currently use a relatively-default doom-modeline
     (doom-modeline-indent-info t))
 #+end_src
 
+To display icons nicely, we also need the ~all-the-icons~ package.
+#+begin_src emacs-lisp
+  (use-package all-the-icons)
+#+end_src
+
+
 ** pdf-tools
 I don't want line numbers in pdf files, they're completely useless
 #+begin_src emacs-lisp
