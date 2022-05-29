@@ -922,3 +922,17 @@ For use in daemon mode starting with systemd, we need to set the path
     (when (daemonp)
       (exec-path-from-shell-initialize)))
 #+end_src
+
+** Flycheck
+[[https:www.flycheck.org][flycheck]] is a more modern syntax checking extension, compared to flymake, which is included in emacs.
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :config
+    (global-flycheck-mode))
+
+  (use-package flycheck-pos-tip
+    :config
+    (flycheck-pos-tip-mode))
+#+end_src
+
