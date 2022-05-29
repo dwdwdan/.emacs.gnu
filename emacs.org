@@ -414,6 +414,10 @@ Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid havi
           ("m" "MAIL [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
            "* TODO %^{Description}\n%:from: %a\nCreated:%U"
            :empty-lines 1
+           :immediate-finish t)
+          ("f" "TODO (File) [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\n%a\nCreated: %U"
+           :empty-lines 1
            :immediate-finish t)))
   #+end_src
 
