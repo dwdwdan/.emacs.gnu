@@ -913,7 +913,13 @@ For use in daemon mode starting with systemd, we need to set the path
 #+begin_src emacs-lisp
   (use-package flycheck
     :config
-    (global-flycheck-mode))
+    (global-flycheck-mode)
+    :general
+    (dan/leader
+      "c" '(:ignore t :which-key "Checkers")
+      "cl" '(flycheck-list-errors :which-key "List Errors")
+      "cn" '(flycheck-next-error :which-key "Next Error")
+      "cp" '(flycheck-previous-error :which-key "Previous Error")))
 
   (use-package flycheck-pos-tip
     :config
