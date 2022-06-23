@@ -925,6 +925,7 @@ For use in daemon mode starting with systemd, we need to set the path
     :hook (lsp-mode . lsp-ui-mode))
 
   (setq lsp-ui-doc-show-with-cursor t
+        lsp-ui-doc-position 'at-point
         lsp-ui-sideline-enable t)
 
   (use-package lsp-pyright
