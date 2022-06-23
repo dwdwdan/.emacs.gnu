@@ -712,7 +712,15 @@ Company mode is my completion engine, mainly because I don't know of any others.
           company-minimum-prefix-length 1)
     :custom-face
     (company-tooltip
-     ((t (:family "JetBrainsmono")))))
+     ((t (:family "JetBrainsmono"))))
+    :bind
+    (:map company-active-map
+          ("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common)))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 #+end_src
 
 ** YASnippets
@@ -905,6 +913,37 @@ For use in daemon mode starting with systemd, we need to set the path
     :config
     (when (daemonp)
       (exec-path-from-shell-initialize)))
+#+end_src
+
+** LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :config
+    (lsp-enable-which-key-integration t)) 
+
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode))
+
+  (setq lsp-ui-doc-show-with-cursor t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-delay 1
+        lsp-ui-sideline-enable t)
+
+  (use-package lsp-pyright
+    :after lsp-mode
+    :hook (python-mode . (lambda()
+                           (require 'lsp-pyright)
+                           (lsp-deferred))))
+
+  (dolist (mode '(LaTeX-mode-hook
+                  c-mode-hook))
+    (add-hook mode 'lsp-deferred))
+
+
+  (setq gc-cons-threshold 100000000) ;; 100mb
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
 #+end_src
 
 ** Flycheck
