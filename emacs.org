@@ -12,18 +12,6 @@ We don't want emacs to load it's default packaging system
   (setq package-enable-at-startup nil)
 #+end_src
 
-** Cosmetics
-We can tell emacs not to load the startup message, menu-bar etc in ~early-init.el~ so it doesn't load them at all. 
-#+begin_src emacs-lisp
-  (setq inhibit-startup-message t)
-
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-
-  (setq ring-bell-function 'ignore)
-#+end_src
-
 ** Native compilation
 We don't want to show any warnings from native-comp. Otherwise we get random popups when a new package is installed etc. We do log them though.
 #+begin_src emacs-lisp
@@ -35,216 +23,6 @@ We don't want to show any warnings from native-comp. Otherwise we get random pop
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
-** System Variables
-We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have emacs on any of my windows machines
-#+begin_src emacs-lisp
-  (defconst sync-dir 
-    (cond ((eq system-type 'windows-nt)
-           (setq sync-dir "C:/Users/Daniel Walters/Dropbox")
-           ;; Windows-specific code goes here.
-           )
-          ((eq system-type 'gnu/linux)
-           (setq sync-dir "~/Nextcloud")
-           ;; Linux-specific code goes here.
-           ))
-    "Directory that files should be synced in. ~/Nextcloud by
-    default on linux and C://Users.Daniel Walters/Dropbox on
-    windows")
-
-  (defconst config-file "emacs.org"
-    "Emacs Configuration file name. This should be a file name
-    relative to `config-dir'. This is used to open the config file
-    with one button press")
-
-  (defconst config-dir "~/.emacs.gnu"
-    "Emacs Configuration Directory. This is where emacs config
-    files should be stored")
-
-  (defconst gtd-dir "~/Nextcloud/Org"
-  "Directory that files for GTD are stored.")
-#+end_src
-
-** Straight.el
-Run the bootstrap from the straight.el docs to make sure straight is installed.
-#+begin_src emacs-lisp
-  ;; Straight.el Bootstrap
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-
-  ;; Configure straight
-  (straight-use-package 'use-package)
-  (setq straight-use-package-by-default t)
-  (setq use-package-always-demand t)
-
-#+end_src
-
-** Helper functions
-Load a config file stored in the config directory
-#+begin_src emacs-lisp
-    ;; We need the s library to do some string comparison
-      (use-package s)
-
-      (defun dan/load-config-file(file)
-  "Loads a config file FILE, stored in `config-dir'. Used as a
-  helper function to load additional configuration files"
-        (interactive "M")
-        (unless (s-suffix? ".el" file)
-          (setq file (concat file ".el")))
-        (setq file (expand-file-name file config-dir))
-        (unless (file-exists-p file)
-          (error "File %s does not exist. It cannot be loaded." file))
-        (load-file file))
-#+end_src
-
-Simpler Macro for ~plist-put~. Stolen from [[https://emacs.stackexchange.com/a/39474][xuchunyang on the emacs stackexchange]] 
-#+begin_src emacs-lisp
-  (defmacro setq-plist-put (plist &rest args)
-    (let ((list nil))
-      (while args
-        (push `(setq ,plist (plist-put ,plist ,(pop args) ,(pop args))) list))
-      (cons 'progn (nreverse list))))
-#+end_src
-
-** Fonts
-#+begin_src emacs-lisp
-  (defun dan/set-fonts (&optional frame)
-;; If frame is nil, we aren't in daemon mode, so don't need to select the frame
-    (when frame
-      (select-frame frame))
-    (set-face-attribute 'default nil :font "Jetbrainsmono-12")
-    (set-face-attribute 'fixed-pitch nil :font "Jetbrainsmono-12")
-    (set-face-attribute 'variable-pitch nil :font "Liberation Sans-12"))
-
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions #'dan/set-fonts)
-    (dan/set-fonts))
-  #+end_src 
-
-** Line Numbers
-I like to have relative line numbers
-#+begin_src emacs-lisp
-  (setq display-line-numbers-type 'relative)
-(global-display-line-numbers-mode)
-#+end_src
-
-** Visual Line Mode
-I prefer to use ~visual-line-mode~ rather than ~truncate-lines~. I think it looks nicer.
-#+begin_src emacs-lisp
-  (global-visual-line-mode 1)
-#+end_src
-
-
-** General
-General is the package I use to set keybindings. We use the ~:keymaps 'override~ line so that my leader key isn't overwritten in certain modes. I spent ages trying to figure this out but [[https://emacs.stackexchange.com/a/52056][this stackexchange answer]] sorted it out for me.
-#+begin_src emacs-lisp
-  (use-package general
-    :config
-    (general-create-definer dan/leader
-      :states '(normal insert visual emacs)
-      :keymaps 'override
-      :prefix "SPC"
-      :global-prefix "C-SPC")
-    (general-create-definer dan/local-leader
-      :states '(normal insert visual emacs)
-      :keymaps 'override
-      :prefix "SPC m"
-      :global-prefix "C-SPC m"))
-#+end_src
-
-** Evil
-The most important package of all, the one that makes emacs actually useable.
-#+begin_src emacs-lisp
-  (use-package evil
-    :init
-    (setq evil-want-integration t)
-    (setq evil-want-keybinding nil)
-    :config
-    (evil-mode 1)
-    (if (>= emacs-major-version 28)
-        (evil-set-undo-system 'undo-redo)))
-
-  (if (< emacs-major-version 28)
-      (use-package undo-tree
-        :config
-        (evil-set-undo-system 'undo-tree)))
-
-  (use-package evil-collection
-    :after evil
-    :init (evil-collection-init))
-#+end_src
-
-** Helm
-Helm is my preferred selection engine. I remap ~C-j~ and ~C-k~ to scroll as I am more used to this, and feels a lot more natural than going to the arrow keys.
-#+begin_src emacs-lisp
-  (use-package helm
-    :general
-    ("M-x" 'helm-M-x)
-    ("C-x C-f" 'helm-find-files)
-    (:keymaps 'helm-map "C-j" 'helm-next-line)
-    (:keymaps 'helm-map "C-k" 'helm-previous-line)
-    (dan/leader
-      "." '(helm-find-files :which-key "Find Files"))
-    :config (helm-mode 1))
-#+end_src
-
-** Magit
-#+begin_src emacs-lisp
-  (use-package magit
-    :general
-    (dan/leader
-      "g" '(magit :which-key "Magit"))
-    :hook
-    (with-editor-mode . evil-insert-state))
-  #+end_src
-
-  I use a tiling WM, so ediff creating new frames is really annoying. Therefore we can disable it here.
-  #+begin_src emacs-lisp
-  (use-package ediff
-    :custom
-    (ediff-window-setup-function 'ediff-setup-windows-plain))
-#+end_src
-
-** Which-key
-#+begin_src emacs-lisp
-  (use-package which-key
-    :config (which-key-mode 1))
-#+end_src
-
-** Cosmetics
-At the moment I'm using dracula but I might change at some point.
-#+begin_src emacs-lisp
-  (use-package doom-themes
-    :config
-    (load-theme 'doom-dracula t)
-    (doom-themes-org-config))
-#+end_src
-
-I currently use a relatively-default doom-modeline
-#+begin_src emacs-lisp
-  (use-package doom-modeline
-    :init
-    (doom-modeline-mode 1)
-    :custom
-    (doom-modeline-buffer-encoding nil)
-    (doom-modeline-indent-info t))
-#+end_src
-
-To display icons nicely, we also need the ~all-the-icons~ package.
-#+begin_src emacs-lisp
-  (use-package all-the-icons)
-#+end_src
-
-
 ** pdf-tools
 I don't want line numbers in pdf files, they're completely useless
 #+begin_src emacs-lisp
@@ -301,17 +79,6 @@ Winner mode is a minor mode that keeps track of window movements, and gives the 
       "w H" '(winner-undo :which-key "Undo Window Movement")
       "w L" '(winner-redo :which-key "Redo Window Movement")
       "w m" '(delete-other-windows :which-key "Maximise Window")))
-#+end_src
-
-** Dired
-We need to create a binding to open dired
-#+begin_src emacs-lisp
-  (use-package dired-x
-    :straight (:type built-in)
-    :general
-    (dan/leader
-      "f d" '(dired :which-key "Dired")
-      "f D" '(dired-jump :which-key "Dired Current Folder")))
 #+end_src
 
 ** auctex
@@ -765,13 +532,6 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
 #+end_src
 
 
-** Rainbow Delimeters
-#+begin_src emacs-lisp
-  (use-package rainbow-delimiters
-    :hook
-    (prog-mode . rainbow-delimiters-mode))
-#+end_src
-
 ** Vterm
 [[https://github.com/akermu/emacs-libvterm][Vterm]] is my terminal emulator of choice for use inside of emacs
 #+begin_src emacs-lisp
@@ -889,26 +649,6 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
 
   (mu4e t)
   (org-msg-mode)
-#+end_src
-
-** Dashboard
-[[github:emacs-dashboard/emacs-dashboard][Emacs Dashboard]] is a pretty dashboard for when emacs opens
-#+begin_src emacs-lisp
-  (use-package dashboard
-    :init
-    (add-hook 'after-init-hook 'dashboard-refresh-buffer)
-    :custom
-    (dashboard-projects-backend 'projectile)
-    (dashboard-items
-     '((projects . 5)
-       (agenda . 5)))
-    (dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
-    (dashboard-agenda-sort-strategy '(time-up todo-state-up))
-    (dashboard-startup-banner 'logo)
-    (dashboard-center-content t)
-    :config
-    (dashboard-setup-startup-hook)
-    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
 #+end_src
 
 ** exec-path-from-shell

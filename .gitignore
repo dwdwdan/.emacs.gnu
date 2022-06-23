@@ -1,5 +1,6 @@
 *
 !emacs.org
+!README.org
 !todos.org
 !*el
 init.el
