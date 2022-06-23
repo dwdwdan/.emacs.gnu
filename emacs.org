@@ -908,7 +908,8 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (dashboard-startup-banner 'logo)
     (dashboard-center-content t)
     :config
-    (dashboard-setup-startup-hook))
+    (dashboard-setup-startup-hook)
+    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
 #+end_src
 
 ** exec-path-from-shell
