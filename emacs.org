@@ -867,7 +867,7 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
     (org-msg-convert-citation t)
     :general
     (dan/local-leader
-      :keymaps 'message-mode-map
+      :keymaps 'org-msg-edit-mode-map
       "s" '(message-goto-subject :which-key "Subject")
       "b" '(org-msg-goto-body :which-key "Body")
       "a" '(org-msg-attach :which-key "Attach"))
