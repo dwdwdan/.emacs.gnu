@@ -2,8 +2,20 @@
 #+TITLE: Emacs Configuration
 #+OPTIONS: html-style:nil num:nil
 #+PROPERTY: header-args :tangle init.el
-#+auto_tangle: nil
+#+auto_tangle: t
 Welcome to my emacs config, I'm relatively new to emacs and elisp so everything in here is likely to change. This document is available on github at [[github:dwdwdan/.emacs.gnu][dwdwdan/.emacs.gnu]] or on my website at [[https:dwdwdan.xyz/emacs.html][dwdwdan.xyz/emacs.html]].
+
+* Performance
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold 100000000) ;; 100mb
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+#+end_src
+
+** Native Compilation
+We don't want to show any warnings from native-comp. Otherwise we get random popups when a new package is installed etc. We do log them though.
+#+begin_src emacs-lisp
+(setq native-comp-async-report-warnings-errors 'silent)
+#+end_src
 
 * System Variables
 We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have emacs on any of my windows machines
@@ -63,7 +75,6 @@ Run the bootstrap from the straight.el docs to make sure straight is installed.
 #+end_src
 
 * Helper Functions
-
 ** Load config file
 First we define a function to run an elisp file in ~config-dir.~
 #+begin_src emacs-lisp
@@ -90,6 +101,15 @@ A macro to simplify using ~plist-put~. Stolen from [[https://emacs.stackexchange
       (while args
         (push `(setq ,plist (plist-put ,plist ,(pop args) ,(pop args))) list))
       (cons 'progn (nreverse list))))
+#+end_src
+
+* Daemon
+For use in daemon mode starting with systemd, we need to set the path
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (when (daemonp)
+      (exec-path-from-shell-initialize)))
 #+end_src
 
 * Cosmetics
@@ -282,4 +302,681 @@ We need to create a binding to open dired
     (dan/leader
       "f d" '(dired :which-key "Dired")
       "f D" '(dired-jump :which-key "Dired Current Folder")))
+#+end_src
+
+* Window and Buffer Bindings
+Set keybinds to move around windows and switch buffers
+#+begin_src emacs-lisp
+  (defun dan/open-config()
+    (interactive)
+    (persp-switch ".emacs.gnu")
+    (find-file (expand-file-name config-file config-dir)))
+
+  (dan/leader
+    "w" '(:ignore t :which-key "Window")
+    "w s" '(evil-window-split :which-key "Horizontal Split")
+    "w v" '(evil-window-vsplit :which-key "Vertical Split")
+    "w h" '(evil-window-left :which-key "Move Left")
+    "w j" '(evil-window-down :which-key "Move Down")
+    "w k" '(evil-window-up :which-key "Move Up")
+    "w l" '(evil-window-right :which-key "Move Right")
+    "w q" '(evil-quit :which-key "Close Window")
+
+    "f" '(:ignore t :which-key "Files")
+    "f c" '(dan/open-config :which-key "Config File")
+    "f f" '(find-files :which-key "Find Files")
+
+    "o" '(:ignore t :which-key "Open Application")
+    "o a" '(org-agenda :which-key "Agenda")
+
+    "b" '(:ignore t :which-key "Buffer")
+    "b b" '(helm-buffers-list :which-key "Switch Buffer")
+    "b k" '(kill-this-buffer :which-key "Kill Buffer")
+    "b r" '(revert-buffer :which-key "Revert Buffer"))
+#+end_src
+
+** Winner Mode
+Winner mode is a minor mode that keeps track of window movements, and gives the ability to undo them. I mostly use it to give me the ability to maximise a window.
+#+begin_src emacs-lisp
+  (use-package winner
+    :config
+    (winner-mode)
+    :general
+    (dan/leader
+      "w H" '(winner-undo :which-key "Undo Window Movement")
+      "w L" '(winner-redo :which-key "Redo Window Movement")
+      "w m" '(delete-other-windows :which-key "Maximise Window")))
+#+end_src
+
+* Projectile
+#+begin_src emacs-lisp
+  (use-package projectile
+    :init
+    (projectile-mode 1)
+    :general
+    ("C-c p" 'projectile-command-map)
+    (dan/leader
+      "p" '(:ignore t :which-key "Projectile")
+      "p p" '(projectile-switch-project :which-key "Switch Project")
+      "p !" '(projectile-run-shell-command-in-root :which-key "Project Shell Command")
+      "p f" '(projectile-find-file :which-key "Find File")
+      "SPC" '(projectile-find-file :which-key "Projectile Find File"))
+    :custom
+    (projectile-project-search-path '("~/repos")))
+
+  (use-package helm-projectile
+    :after projectile)
+#+end_src
+
+* Completion (Company Mode)
+Company mode is my completion engine, mainly because I don't know of any others. I have the idle delay and the minimum prefix length as quite small as I like completions to appear often and without delay.
+#+begin_src emacs-lisp
+  (use-package company
+    :init (global-company-mode)
+    :config
+    (setq company-dabbrev-downcase 0
+          company-idle-delay 0.1
+          company-minimum-prefix-length 1)
+    :custom-face
+    (company-tooltip
+     ((t (:family "JetBrainsmono"))))
+    :bind
+    (:map company-active-map
+          ("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common)))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
+#+end_src
+
+* YASnippets
+I use [[https://github.com/joaotavora/yasnippet][yasnippet]] for my snippets. I don't use any already existing snippet packages as I wanted to build my own. I keep a seperate git repository for my snippets [[https:github.com/dwdwdan/yasnippets][on github]].
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :general
+    (:keymaps 'yas-minor-mode-map
+              "C-;" yas-maybe-expand)
+    :config
+    (yas-global-mode))
+#+end_src
+
+* Helpful
+Helpful is a great package that makes the emacs help menus so much nicer. I basically replace the default emacs help commands with helpful, and then add them under ~SPC h~ as well.
+#+begin_src emacs-lisp
+  (use-package helpful
+    :general
+    ("C-h f" 'helpful-callable)
+    ("C-h v" 'helpful-variable)
+    ("C-h k" 'helpful-key)
+    ("C-h C" 'helpful-command)
+    ("C-h h" 'helpful-at-point)
+    (dan/leader
+      "h" '(:ignore t :which-key "Help")
+      "h f" '(helpful-callable :which-key "Function")
+      "h v" '(helpful-variable :which-key "Variable")
+      "h k" '(helpful-key :which-key "Keybind")
+      "h C" '(helpful-command :which-key "Command")
+      "h h" '(helpful-at-point :which-key "Here")))
+#+end_src
+
+* Woman
+Woman is an inbuilt package that allows you to browse Unix Man Pages
+#+begin_src emacs-lisp
+  (dan/leader
+    "h m" '(woman :which-key "Man"))
+#+end_src
+
+* Perspective.el
+[[https://github.com/nex3/perspective-el][perspective.el]] is a package that adds workspaces to emacs. It allows you to restrict the buffer list so it is shorter and only applies for a single 'perspective'. The package [[https://github.com/bbatsov/persp-projectile][perp-projectile]] adds integration to projectile, meaning that ~SPC p p~ will also create or switch to a new workspace.
+#+begin_src emacs-lisp
+  (use-package perspective
+    :init
+    (persp-mode)
+    :general
+    (dan/leader
+      "W" '(:ignore t :which-key "Workspaces")
+      "W s" '(persp-switch :which-key "Switch Workspace")
+      "W r" '(persp-rename :which-key "Rename Workspace")
+      "W a" '(persp-add-buffer :which-key "Add buffer to Workspace")
+      "W j" '(persp-next :which-key "Next Workspace")
+      "W k" '(persp-prev :which-key "Previous Workspace")
+      "W m" '(persp-merge :which-key "Merge Workspace")
+      "W u" '(persp-unmerge :which-key "Unmerge Workspace")
+      "W S" '(persp-state-save :which-key "Save Workspaces")
+      "W L" '(persp-state-load :which-key "Load Workspaces")
+
+      "b B" '(persp-switch-to-buffer :which-key "Global Switch Buffer")
+      ))
+
+  (use-package persp-projectile)
+#+end_src
+
+* Flycheck
+[[https:www.flycheck.org][flycheck]] is a more modern syntax checking extension, compared to flymake, which is included in emacs.
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :config
+    (global-flycheck-mode)
+    :general
+    (dan/leader
+      "c" '(:ignore t :which-key "Checkers")
+      "cl" '(flycheck-list-errors :which-key "List Errors")
+      "cn" '(flycheck-next-error :which-key "Next Error")
+      "cp" '(flycheck-previous-error :which-key "Previous Error")))
+
+  (use-package flycheck-pos-tip
+    :config
+    (flycheck-pos-tip-mode))
+#+end_src
+
+* LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :config
+    (lsp-enable-which-key-integration t)) 
+
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode))
+
+  (setq lsp-ui-doc-show-with-cursor t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-delay 1
+        lsp-ui-sideline-enable t)
+
+  (use-package lsp-pyright
+    :after lsp-mode
+    :hook (python-mode . (lambda()
+                           (require 'lsp-pyright)
+                           (lsp-deferred))))
+
+  (dolist (mode '(LaTeX-mode-hook
+                  c-mode-hook))
+    (add-hook mode 'lsp-deferred))
+
+
+#+end_src
+
+* Config for File Types
+** Org
+My org mode configuration is probably the largest section of my emacs configuration.
+
+#+begin_src emacs-lisp
+  (setq org-directory (concat sync-dir "/Org")
+        org-ellipsis " ▼"
+        org-hide-emphasis-markers t
+        org-log-into-drawer t
+        org-startup-with-latex-preview t)
+#+end_src
+
+*** GTD
+**** Files that I'm using
+- ~inbox.org~ is where all my captures go. It is intended to be reviewed often, and tasks should not sit here for long
+- ~gtd.org~ is the main file for near-future todos. It has top level headings for projects, and a special project called ~single tasks~ for any tasks that don't fit.
+- ~someday.org~ is structured the same as ~gtd.org~ but is for tasks that I don't plan to do in the short term
+- ~tickler.org~ is for tasks that have a scheduled date in the far future
+- ~reference.org~ is for reference materials, or for any articles I want to keep filed
+- ~gtd_archive.org~ is where completed or cancelled tasks get archived
+- ~recipeIdeas.org~ is for recipe ideas that I come up with
+
+**** Contexts
+Contexts will be implemented as tags starting with an @ symbol. I plan to have
+- @campus
+- @home
+- @laptop
+- @wolves
+These will be exclusive, if I can do it anywhere I have my laptop it will get the @laptop tag, if I have to be on campus @campus, at home @home, or in wolverhampton (my hometown) @wolves
+#+begin_src emacs-lisp
+  (setq org-tag-alist '(("@campus" . ?c)
+                        ("@home" . ?h)
+                        ("@laptop" . ?l)
+                        ("@wolves" . ?w)))
+#+end_src
+
+**** Keywords
+For todo keywords, I plan to use a similar system to [[http://members.optusnet.com.au/~charles57/GTD/gtd_workflow.html#sec-8][Charles Cave]]. These are mostly obvious as to what they mean, except for APPT, which is for things that have to happen at a certain time. NEXT is used for the next task to complete in a project.
+#+begin_src emacs-lisp
+  (setq org-todo-keywords '((sequence
+                             "TODO(t)"
+                             "NEXT(n)"
+                             "STARTED(s)"
+                             "WAITING(w)"
+                             "APPT(a)"
+                             "|"
+                             "DONE(d)"
+                             "CANCELLED(c)")))
+#+end_src
+
+**** Archiving
+I want to archive into a datetree in ~gtd_archive.org~.
+#+begin_src emacs-lisp
+  (setq org-archive-location (concat
+                              (expand-file-name "gtd_archive.org" gtd-dir)
+                              "::datetree/"))
+#+end_src
+
+**** Capture
+Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid having to press ~C-c C-c~.
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+  ;; First, a standard template that just takes a string
+        `(("t" "TODO [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\nCreated: %U"
+           :empty-lines 1
+           :immediate-finish t)
+  ;; An email capture template, for use with mu4e. It is blocked from being used elsewhere by org-capture-templates-contexts below.
+          ("m" "MAIL [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\n%:from: %a\nCreated:%U"
+           :empty-lines 1
+           :immediate-finish t)
+  ;; A file capture template, which additionally attaches a link to the current location.
+          ("f" "TODO (File) [inbox]" entry (file ,(expand-file-name "inbox.org" gtd-dir))
+           "* TODO %^{Description}\n%a\nCreated: %U"
+           :empty-lines 1
+           :immediate-finish t)))
+  #+end_src
+
+  We use ~org-capture-templates-contexts~ to prevent me from trying to capture an email when not in mu4e.
+#+begin_src emacs-lisp
+  (setq org-capture-templates-contexts
+        '(("m" ((in-mode . "mu4e-headers-mode")
+                (in-mode . "mu4e-view-mode")))))
+#+end_src
+
+**** Agenda
+My agenda view will probably need adjusting, it may be a good idea to add [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] to better split tasks based on project priority.
+
+***** Agenda Files
+We want to add all gtd files to ~org-agenda-files~.
+#+begin_src emacs-lisp
+  (setq org-agenda-files nil)
+  (dolist (file '("gtd.org" "inbox.org" "tickler.org"))
+    (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
+#+end_src
+
+***** Commands
+I want an agenda command for each context I could be in. I'm assuming that I'll always have my laptop on me (which I must do if I'm using emacs).
+#+begin_src emacs-lisp
+  (setq org-agenda-custom-commands '(("c" "Campus"
+                                      ((tags "@campus|@laptop")))
+                                     ("h" "Home"
+                                      ((tags "@home|@laptop")))
+                                     ("l" "Laptop"
+                                      ((tags "@laptop")))
+                                     ("w" "Wolves"
+                                      ((tags "@wolves|@laptop")))
+                                     ("n" "Next"
+                                      ((todo "NEXT")))
+                                     ("a" "All"
+                                      ((agenda)
+                                       (alltodo "")))))
+#+end_src
+
+***** Cosmetics
+I need to turn of ~display-line-numbers-mode~ in the agenda, so tags appear on the right, rather than on the next line:
+#+begin_src emacs-lisp
+  (add-hook 'org-agenda-mode-hook '(lambda()
+                                     (display-line-numbers-mode -1)))
+#+end_src
+
+I want my org agenda to always start on the previous monday, and show 7 days (i.e. show the full current week). 
+#+begin_src emacs-lisp
+  (setq org-agenda-span 7
+        org-agenda-start-on-weekday 1
+        org-agenda-start-day "+0d")
+  #+end_src
+
+***** Keybindings
+I need the package ~evil-org~ to add evil keys to the agenda. I don't know why this isn't included in ~evil-collection~
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :after org
+    :hook (org-mode . evil-org-mode)
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+#+end_src
+
+**** Refile
+We want to be able to refile from ~inbox.org~ to any of my files, including ~gtd.org~, ~someday.org~ and ~reference.org~
+#+begin_src emacs-lisp
+    ;; Allow org-refile to refile into top level headings.
+    ;; This is used to create a new project.
+    (setq org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil)
+
+    (setq org-refile-targets `((,(expand-file-name "gtd.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "someday.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "tickler.org" gtd-dir) :maxlevel . 1)
+                               (,(expand-file-name "recipeIdeas.org" gtd-dir) :maxlevel . 1)
+                             (,(expand-file-name "reference.org" gtd-dir) :maxlevel . 1)))
+#+end_src
+
+Whenever I refile a todo, I want to save all buffers. By default emacs will simply move the item, but not save the files. This essentially means that if emacs is forced to shutdown the refile will not have happened.
+#+begin_src emacs-lisp
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+#+end_src
+
+**** Mappings
+We need easier mappings to archive, refile etc:
+#+begin_src emacs-lisp
+  (dan/local-leader
+    :keymaps 'org-mode-map
+    "a" '(org-archive-subtree :which-key "Archive")
+    "r" '(org-refile :which-key "Refile")
+    "c" '(org-clock-in :which-key "Clock in"))
+  #+end_src
+
+  We want a clock out command to be global
+#+begin_src emacs-lisp
+  (dan/leader
+    "n c" '(org-clock-out :which-key "Clock out"))
+#+end_src
+
+We also want a global mapping to go to the inbox, used when I want to review and file it.
+#+begin_src emacs-lisp
+  (defun dan/go-to-inbox ()
+    (interactive)
+    (find-file (expand-file-name "inbox.org" gtd-dir)))
+
+  (dan/leader
+    "o i" '(dan/go-to-inbox :which-key "Inbox"))
+#+end_src
+
+*** Faces
+**** Heading Size
+First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (dolist (face '((org-document-title . 3.0)
+                    (org-level-1 . 1.5)
+                    (org-level-2 . 1.4)
+                    (org-level-3 . 1.3)
+                    (org-level-4 . 1.2)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.05)))
+      (set-face-attribute (car face) nil :weight 'bold :height (cdr face))))
+#+end_src
+
+**** Mixed Pitch
+The mixed pitch package sets certain elements in a document to be fixed pitch and others to variable. This is very useful in org mode, so I can have a variable pitch font for most of the body, but a fixed pitch font for code blocks.
+#+begin_src emacs-lisp
+  (use-package mixed-pitch
+  :hook (org-mode . mixed-pitch-mode))
+#+end_src
+
+*** Use-package
+This block actually requires org mode and activates the hooks.
+#+begin_src emacs-lisp
+  (use-package org
+    :straight (:type built-in)
+    :hook
+    (org-mode . org-indent-mode)
+    (org-mode . (lambda() (display-line-numbers-mode -1))))
+#+end_src
+
+*** Mappings
+So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
+#+begin_src emacs-lisp
+  (dan/leader
+    "n" '(:ignore t :which-key "Notes")
+    "n n" '(org-capture :which-key "Org Capture"))
+  
+  (dan/local-leader
+    :keymaps 'org-mode-map
+    "T" '(org-babel-tangle :which-key "Tangle")
+    "e" '(org-export-dispatch :which-key "Export")
+    "l" '(org-insert-link :which-key "Insert Link")
+    "t" '(org-todo :which-key "Todo"))
+#+end_src
+
+*** Fragtog
+Org fragtog will render latex previews when the cursor is outside them. It will turn off the rendering when the cursor enters the block, allowing easier editing.
+#+begin_src emacs-lisp
+  (use-package org-fragtog
+    :hook (org-mode . org-fragtog-mode))
+#+end_src
+
+We also want to scale up latex renders to better match the font size
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (setq-plist-put org-format-latex-options :scale 1.5))
+#+end_src
+
+*** Superstar
+Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
+#+begin_src emacs-lisp
+  (use-package org-superstar
+    :hook
+    (org-mode . org-superstar-mode)
+    :config
+    (setq org-superstar-headline-bullets-list '("◉" "○")
+          org-superstar-leading-bullet ?\s))
+#+end_src
+
+*** Export
+I don't want a html postamble
+#+begin_src emacs-lisp
+(setq org-html-postamble nil)
+#+end_src
+
+I want to use my default CSS by default:
+#+begin_src emacs-lisp
+  (setq org-html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://dwdwdan.github.io/org-html/css.css\"/>
+  <script type=\"text/javascript\" src=\"https://dwdwdan.github.io/org-html/js.js\"></script>")
+#+end_src
+
+
+I want a command to export to html and send to my website
+#+begin_src emacs-lisp
+  (defconst server-name "server"
+    "A string representing the ssh location of the web server.
+                    For example, if you run `ssh user@123.456.789.123` to ssh into the server, `server-name` should be set to `user@123.456.789.123`")
+
+  (defconst server-website-location "/var/www/personal/"
+    "A string representing the file path on the web server where you wnat exported files to be stored.
+                     This should contain a trailing /")
+
+  (defconst web-address "https://dwdwdan.xyz/"
+    "A string representing the url to the web server. This should lead to the folder where exported files are stored
+                    This should contain a trailing /, as well as the protocol to be used")
+
+
+  (defun dan/export-to-html-server (&optional should-open-in-browser)
+    "Export the current org file to html and copy to web server.
+It will use the values of `server-name’, `server-website-location’ and `web-address’ to upload using scp.
+
+If invoked using a prefix argument or with SHOULD-OPEN-IN-BROWSER non-nil it will also open the exported file in a web browser using `browse-url-xdg-open'"
+    (interactive "P")
+    ;; org-html-export-to-html returns the exported file-name
+    (setq file-name (org-html-export-to-html))
+    ;; we use a big concat to form the command we need to run
+    (setq shell-command-to-run (concat "scp " file-name " " server-name ":" server-website-location file-name))
+    (shell-command shell-command-to-run)
+    (setq uploaded-web-address (concat web-address file-name))
+    ;; copy the web address it's available at to the clipboard
+    (kill-new uploaded-web-address)
+    (when should-open-in-browser
+      ;; if should-open-in-browser is non-nil, we want to open it
+      (browse-url-xdg-open uploaded-web-address))
+    ;; send a message to tell the user where to find it
+    (message (concat "Viewable at " uploaded-web-address ".
+  Address has been copied to clipboard.")))
+#+end_src
+
+*** Htmlize
+Htmlize seems to be a depency to export to html properly.
+#+begin_src emacs-lisp
+  (use-package htmlize)
+#+end_src
+
+*** Auto Tangle
+org-auto-tangle will automatically tangle an org file if it has ~#+auto_tangle~ set to ~t~
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :hook
+    (org-mode . org-auto-tangle-mode))
+#+end_src
+
+*** Publish
+I use org publish to publish my emacs config to my website.
+#+begin_src emacs-lisp
+  (setq org-publish-project-alist (list
+                                   (list "emacs config"
+                                         :base-directory "~/.emacs.gnu"
+                                         :publishing-directory "/ssh:server:/var/www/personal"
+                                         ;;:publishing-directory "~/tmp"
+                                         :base-extension "org"
+                                         :publishing-function 'org-html-publish-to-html
+                                         :recursive nil)))
+#+end_src
+
+*** Github Links
+[[https://github.com/lygaret/emacs.d/blob/rewrite/site-lisp/org-github-links.el][org-github-links.el]] is a package/script to add easy github links to org. They have the form
+
+#+begin_example
+github:user/repo
+github:user/repo@a738b4b8
+github:user/repo#45
+#+end_example
+
+#+begin_src emacs-lisp
+(dan/load-config-file "org-github-links")
+#+end_src
+
+
+
+** pdf-tools
+I don't want line numbers in pdf files, they're completely useless
+#+begin_src emacs-lisp
+  (defun dan/pdf-hook ()
+    (display-line-numbers-mode -1)
+    (auto-revert-mode 1))
+
+  (use-package pdf-tools
+    :hook
+    (pdf-view-mode . dan/pdf-hook)
+    :init
+    (pdf-tools-install))
+#+end_src
+
+** auctex
+#+begin_src emacs-lisp
+  (use-package tex
+    :straight auctex
+    :config
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+    (setq preview-scale-function 1.4)
+    (setq preview-auto-reveal t)
+    :hook
+    (LaTeX-mode . LaTeX-math-mode)
+    (LaTeX-mode . mixed-pitch-mode)
+    (LaTeX-mode . TeX-source-correlate-mode))
+#+end_src
+
+
+*** Reftex
+#+begin_src emacs-lisp
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (setq reftex-plug-into-AUCTeX t)
+#+end_src
+
+* Vterm
+[[https://github.com/akermu/emacs-libvterm][Vterm]] is my terminal emulator of choice for use inside of emacs
+#+begin_src emacs-lisp
+  (use-package vterm
+    :general
+    (dan/leader
+      "o t" '(vterm-other-window :which-key "Vterm")))
+#+end_src
+
+* Elfeed
+[[https://github.com/skeeto/elfeed][Elfeed]] is a package for reading RSS feeds. I currently use the default config but I may change some things later
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :general
+    (dan/leader
+      "o r" '(elfeed :which-key "RSS reader"))
+    :hook
+    ;; Don't display line numbers when reading an RSS document
+    (elfeed-show-mode . (lambda () (display-line-numbers-mode -1)))
+    ;; Automatically update RSS feeds every 10 minutes
+    (emacs-startup . (lambda () (run-at-time 5 600 'elfeed-update)))
+    :custom
+    (elfeed-feeds
+     '(("https://dansdinners.xyz/feed.xml" mine)
+       ("https://planet.emacslife.com/atom.xml" emacs))))
+#+end_src
+
+* Mu4e
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :straight (:type built-in)
+    :load-path "/usr/share/emacs/site-lisp/mu4e"
+    :custom
+    (mu4e-change-filenames-when-moving t)
+    (mu4e-confirm-quit nil)
+    (mu4e-update-interval (* 10 60))
+    (mu4e-get-mail-command "mbsync -a")
+    (mu4e-maildir "~/.mail")
+
+    (mu4e-drafts-folder "/personal/Drafts")
+    (mu4e-sent-folder "/personal/Sent")
+    (mu4e-trash-folder "/personal/Deleted")
+    (mu4e-refile-folder "/personal/Archive")
+
+    (user-mail-address "dan.walters5@outlook.com")
+
+    (mu4e-maildir-shortcuts
+     '((:maildir "/personal/Inbox" :key ?i)))
+
+    (mu4e-bookmarks
+     '(( :name  "Unread messages"
+         :query "flag:unread AND NOT flag:trashed AND NOT maildir:/personal/Archive AND NOT maildir:/personal/Deleted"
+         :key ?u)
+       ( :name "Today's messages"
+         :query "date:today..now"
+         :key ?t)
+       ( :name "Last 7 days"
+         :query "date:7d..now"
+         :hide-unread t
+         :key ?w)
+       ( :name "Messages with images"
+         :query "mime:image/*"
+         :key ?p)))
+    (message-send-mail-function 'smtpmail-send-it)
+    (smtpmail-smtp-server "smtp.office365.com")
+    :general
+    (dan/leader
+      "o m" '(mu4e :which-key "Mail")
+      "o M" '(mu4e-compose-new :which-key "Compose Mail"))
+    (dan/leader
+      :keymaps '(mu4e-headers-view mu4e-view-mode)
+      "n n" '(mu4e-org-store-and-capture :which-key "Org Capture")))
+
+  (use-package org-msg
+    :init
+    (setq mail-user-agent 'mu4e-user-agent)
+    :custom
+    (org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil d:nil num:nil tex:dvipng")
+    (org-msg-startup "hidestars indent inlineimages")
+    (org-msg-convert-citation t)
+    :general
+    (dan/local-leader
+      :keymaps 'org-msg-edit-mode-map
+      "s" '(message-goto-subject :which-key "Subject")
+      "b" '(org-msg-goto-body :which-key "Body")
+      "a" '(org-msg-attach :which-key "Attach"))
+    :hook
+    (org-msg-edit-mode . (lambda() (make-variable-buffer-local 'org-html-head)
+                           (setq-local org-html-head nil))))
+
+  (mu4e t)
+  (org-msg-mode)
 #+end_src
