@@ -1,6 +1,5 @@
 #+TITLE: Emacs Configuration
-#+SETUPFILE: /home/dan/repos/org-html/setup.setup
-#+OPTIONS: html-style:nil
+#+OPTIONS: html-style:nil num:nil
 #+auto_tangle: t
 Welcome to my emacs config, I'm relatively new to emacs and elisp so everything in here is likely to change. This document is available on github at [[github:dwdwdan/.emacs.gnu][dwdwdan/.emacs.gnu]] or on my website at [[https:dwdwdan.xyz/emacs.html][dwdwdan.xyz/emacs.html]].
 * Early init.el
