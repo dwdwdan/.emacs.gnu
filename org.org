@@ -3,19 +3,10 @@
 #+PROPERTY: header-args :tangle org.el
 #+auto_tangle: t
 
-* Org
-My org mode configuration is probably the largest section of my emacs configuration.
+Org mode is one of the main reasons I use emacs, I use it for tracking my todo lists (using the GTD system), taking notes for my university work, and configuring emacs.
 
-#+begin_src emacs-lisp
-  (setq org-directory (concat sync-dir "/Org")
-        org-ellipsis " ▼"
-        org-hide-emphasis-markers t
-        org-log-into-drawer t
-        org-startup-with-latex-preview t)
-#+end_src
-
-** GTD
-*** Files that I'm using
+* GTD
+** Files that I'm using
 - ~inbox.org~ is where all my captures go. It is intended to be reviewed often, and tasks should not sit here for long
 - ~gtd.org~ is the main file for near-future todos. It has top level headings for projects, and a special project called ~single tasks~ for any tasks that don't fit.
 - ~someday.org~ is structured the same as ~gtd.org~ but is for tasks that I don't plan to do in the short term
@@ -24,7 +15,7 @@ My org mode configuration is probably the largest section of my emacs configurat
 - ~gtd_archive.org~ is where completed or cancelled tasks get archived
 - ~recipeIdeas.org~ is for recipe ideas that I come up with
 
-*** Contexts
+** Contexts
 Contexts will be implemented as tags starting with an @ symbol. I plan to have
 - @campus
 - @home
@@ -38,7 +29,7 @@ These will be exclusive, if I can do it anywhere I have my laptop it will get th
                         ("@wolves" . ?w)))
 #+end_src
 
-*** Keywords
+** Keywords
 For todo keywords, I plan to use a similar system to [[http://members.optusnet.com.au/~charles57/GTD/gtd_workflow.html#sec-8][Charles Cave]]. These are mostly obvious as to what they mean, except for APPT, which is for things that have to happen at a certain time. NEXT is used for the next task to complete in a project.
 #+begin_src emacs-lisp
   (setq org-todo-keywords '((sequence
@@ -52,7 +43,7 @@ For todo keywords, I plan to use a similar system to [[http://members.optusnet.c
                              "CANCELLED(c)")))
 #+end_src
 
-*** Archiving
+** Archiving
 I want to archive into a datetree in ~gtd_archive.org~.
 #+begin_src emacs-lisp
   (setq org-archive-location (concat
@@ -60,7 +51,7 @@ I want to archive into a datetree in ~gtd_archive.org~.
                               "::datetree/"))
 #+end_src
 
-*** Capture
+** Capture
 Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid having to press ~C-c C-c~.
 #+begin_src emacs-lisp
   (setq org-capture-templates
@@ -88,10 +79,10 @@ Any captures should go into ~inbox.org~. I use ~:immediate-finish~ to avoid havi
                 (in-mode . "mu4e-view-mode")))))
 #+end_src
 
-*** Agenda
+** Agenda
 My agenda view will probably need adjusting, it may be a good idea to add [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] to better split tasks based on project priority.
 
-**** Agenda Files
+*** Agenda Files
 We want to add all gtd files to ~org-agenda-files~.
 #+begin_src emacs-lisp
   (setq org-agenda-files nil)
@@ -99,7 +90,7 @@ We want to add all gtd files to ~org-agenda-files~.
     (add-to-list 'org-agenda-files (expand-file-name file gtd-dir)))
 #+end_src
 
-**** Commands
+*** Commands
 I want an agenda command for each context I could be in. I'm assuming that I'll always have my laptop on me (which I must do if I'm using emacs).
 #+begin_src emacs-lisp
   (setq org-agenda-custom-commands '(("c" "Campus"
@@ -117,7 +108,7 @@ I want an agenda command for each context I could be in. I'm assuming that I'll 
                                        (alltodo "")))))
 #+end_src
 
-**** Cosmetics
+*** Cosmetics
 I need to turn of ~display-line-numbers-mode~ in the agenda, so tags appear on the right, rather than on the next line:
 #+begin_src emacs-lisp
   (add-hook 'org-agenda-mode-hook '(lambda()
@@ -131,7 +122,7 @@ I want my org agenda to always start on the previous monday, and show 7 days (i.
         org-agenda-start-day "+0d")
   #+end_src
 
-**** Keybindings
+*** Keybindings
 I need the package ~evil-org~ to add evil keys to the agenda. I don't know why this isn't included in ~evil-collection~
 #+begin_src emacs-lisp
   (use-package evil-org
@@ -142,7 +133,7 @@ I need the package ~evil-org~ to add evil keys to the agenda. I don't know why t
     (evil-org-agenda-set-keys))
 #+end_src
 
-*** Refile
+** Refile
 We want to be able to refile from ~inbox.org~ to any of my files, including ~gtd.org~, ~someday.org~ and ~reference.org~
 #+begin_src emacs-lisp
     ;; Allow org-refile to refile into top level headings.
@@ -162,7 +153,7 @@ Whenever I refile a todo, I want to save all buffers. By default emacs will simp
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 
-*** Mappings
+** Mappings
 We need easier mappings to archive, refile etc:
 #+begin_src emacs-lisp
   (dan/local-leader
@@ -188,8 +179,8 @@ We also want a global mapping to go to the inbox, used when I want to review and
     "o i" '(dan/go-to-inbox :which-key "Inbox"))
 #+end_src
 
-** Faces
-*** Heading Size
+* Cosmetics
+** Heading Size
 First we set the headings to be bigger than the standard text size. we have to use floats for these so that emacs uses a scale factor rather than setting the height explicitly (the title was very weird being only 3 high).
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
@@ -205,24 +196,57 @@ First we set the headings to be bigger than the standard text size. we have to u
       (set-face-attribute (car face) nil :weight 'bold :height (cdr face))))
 #+end_src
 
-*** Mixed Pitch
+** Mixed Pitch
 The mixed pitch package sets certain elements in a document to be fixed pitch and others to variable. This is very useful in org mode, so I can have a variable pitch font for most of the body, but a fixed pitch font for code blocks.
 #+begin_src emacs-lisp
   (use-package mixed-pitch
   :hook (org-mode . mixed-pitch-mode))
 #+end_src
 
-** Use-package
+** Bullets
+Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
+#+begin_src emacs-lisp
+  (use-package org-superstar
+    :hook
+    (org-mode . org-superstar-mode)
+    :config
+    (setq org-superstar-headline-bullets-list '("◉" "○")
+          org-superstar-leading-bullet ?\s))
+#+end_src
+
+** Ellipsis
+The ellipsis is the symbol shown to the right of a folded header. I like to use ~U+25BC~ (~▼~).
+#+begin_src emacs-lisp
+(setq org-ellipsis " ▼")
+#+end_src
+
+** Emphasis Markers
+I don't like to see the emphasis markers (~~~, ~*~ etc) so we get org to hide them
+#+begin_src emacs-lisp
+(setq org-hide-emphasis-markers t)
+#+end_src
+
+** Startup
+When I open an org mode buffer, I want latex previews and inline images. I also want to start with org folded
+#+begin_src emacs-lisp
+  (setq org-startup-with-latex-preview t
+        org-startup-with-inline-images t
+        org-startup-folded t
+        org-startup-indented t)
+#+end_src
+
+
+
+* Use-package
 This block actually requires org mode and activates the hooks.
 #+begin_src emacs-lisp
   (use-package org
     :straight (:type built-in)
     :hook
-    (org-mode . org-indent-mode)
     (org-mode . (lambda() (display-line-numbers-mode -1))))
 #+end_src
 
-** Mappings
+* Mappings
 So far I just have org capture bound outside of org mode itself, though I may add additional bindings for finding a notes file or similar. I also have set local mappings for tangling and exporting org files.
 #+begin_src emacs-lisp
   (dan/leader
@@ -237,7 +261,7 @@ So far I just have org capture bound outside of org mode itself, though I may ad
     "t" '(org-todo :which-key "Todo"))
 #+end_src
 
-** Fragtog
+* Fragtog
 Org fragtog will render latex previews when the cursor is outside them. It will turn off the rendering when the cursor enters the block, allowing easier editing.
 #+begin_src emacs-lisp
   (use-package org-fragtog
@@ -250,18 +274,7 @@ We also want to scale up latex renders to better match the font size
     (setq-plist-put org-format-latex-options :scale 1.5))
 #+end_src
 
-** Superstar
-Org superstar is a package that turns the * in headers into nicer characters. The variable ~org-superstar-headline-bullets-list~ sets the characters to use.
-#+begin_src emacs-lisp
-  (use-package org-superstar
-    :hook
-    (org-mode . org-superstar-mode)
-    :config
-    (setq org-superstar-headline-bullets-list '("◉" "○")
-          org-superstar-leading-bullet ?\s))
-#+end_src
-
-** Export
+* Export
 I don't want a html postamble
 #+begin_src emacs-lisp
 (setq org-html-postamble nil)
@@ -271,6 +284,11 @@ I want to use my default CSS by default:
 #+begin_src emacs-lisp
   (setq org-html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://dwdwdan.github.io/org-html/css.css\"/>
   <script type=\"text/javascript\" src=\"https://dwdwdan.github.io/org-html/js.js\"></script>")
+#+end_src
+
+I don't want org to run all the code in a file when it exports
+#+begin_src emacs-lisp
+(setq org-export-use-babel nil)
 #+end_src
 
 
@@ -311,13 +329,13 @@ If invoked using a prefix argument or with SHOULD-OPEN-IN-BROWSER non-nil it wil
   Address has been copied to clipboard.")))
 #+end_src
 
-** Htmlize
+* Htmlize
 Htmlize seems to be a depency to export to html properly.
 #+begin_src emacs-lisp
   (use-package htmlize)
 #+end_src
 
-** Auto Tangle
+* Auto Tangle
 org-auto-tangle will automatically tangle an org file if it has ~#+auto_tangle~ set to ~t~
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
@@ -325,7 +343,7 @@ org-auto-tangle will automatically tangle an org file if it has ~#+auto_tangle~ 
     (org-mode . org-auto-tangle-mode))
 #+end_src
 
-** Publish
+* Publish
 I use org publish to publish my emacs config to my website.
 #+begin_src emacs-lisp
   (setq org-publish-project-alist (list
@@ -338,7 +356,7 @@ I use org publish to publish my emacs config to my website.
                                          :recursive nil)))
 #+end_src
 
-** Github Links
+* Github Links
 [[https://github.com/lygaret/emacs.d/blob/rewrite/site-lisp/org-github-links.el][org-github-links.el]] is a package/script to add easy github links to org. They have the form
 
 #+begin_example
