@@ -301,6 +301,13 @@ Magit is one of the main reasons I use emacs, it's so nice. I also set magit com
     (ediff-window-setup-function 'ediff-setup-windows-plain))
 #+end_src
 
+Forge allows me to interact with github/gitlab directly in emacs
+#+begin_src emacs-lisp
+  (use-package forge
+    :after magit)
+#+end_src
+
+
 * Dired
 We need to create a binding to open dired
 #+begin_src emacs-lisp
