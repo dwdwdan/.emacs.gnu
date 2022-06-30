@@ -373,6 +373,7 @@ Company mode is my completion engine, mainly because I don't know of any others.
 #+begin_src emacs-lisp
   (use-package company
     :init (global-company-mode)
+    :after 'lsp-mode
     :config
     (setq company-dabbrev-downcase 0
           company-idle-delay 0.1
