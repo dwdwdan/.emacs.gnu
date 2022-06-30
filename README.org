@@ -434,6 +434,8 @@ Woman is an inbuilt package that allows you to browse Unix Man Pages
   (use-package perspective
     :init
     (persp-mode)
+    :custom
+    (persp-suppress-no-prefix-key-warning t)
     :general
     (dan/leader
       "W" '(:ignore t :which-key "Workspaces")
