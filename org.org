@@ -241,7 +241,6 @@ When I open an org mode buffer, I want latex previews and inline images. I also 
 This block actually requires org mode and activates the hooks.
 #+begin_src emacs-lisp
   (use-package org
-    :straight (:type built-in)
     :hook
     (org-mode . (lambda() (display-line-numbers-mode -1))))
 #+end_src
