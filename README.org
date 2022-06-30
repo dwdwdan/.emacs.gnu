@@ -829,7 +829,7 @@ I use org publish to publish my emacs config to my website.
   (setq org-publish-project-alist (list
                                    (list "emacs config"
                                          :base-directory "~/.emacs.gnu"
-                                         :publishing-directory "/ssh:server:/var/www/personal"
+                                         :publishing-directory "/ssh:server:/var/www/personal/emacs"
                                          ;;:publishing-directory "~/tmp"
                                          :base-extension "org"
                                          :publishing-function 'org-html-publish-to-html
