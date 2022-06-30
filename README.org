@@ -33,7 +33,7 @@ We set ~sync-dir~ based on OS. This mostly does nothing as I don't actually have
     default on linux and C://Users.Daniel Walters/Dropbox on
     windows")
 
-  (defconst config-file "emacs.org"
+  (defconst config-file "README.org"
     "Emacs Configuration file name. This should be a file name
     relative to `config-dir'. This is used to open the config file
     with one button press")
