@@ -215,6 +215,14 @@ and then install the [[github:emacs-dashboard/emacs-dashboard][Dashboard]] packa
     (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
 #+end_src
 
+* Backups
+I want emacs to put it's backups all in one place
+#+begin_src emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.backups"))
+        backup-by-copying t)
+#+end_src
+
+
 * Evil
 As I'm a filthy vim user at heart, I have to install evil to make emacs remotely useable. Since I use emacs 28.1, I use the new ~undo-redo~ system. If the config is launched on something earlier than Emacs 28, I install ~undo-tree~, but I'm not familiar with it in detail.
 #+begin_src emacs-lisp
