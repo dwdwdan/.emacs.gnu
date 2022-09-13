@@ -262,7 +262,8 @@ So far I just have org capture bound outside of org mode itself, though I may ad
     "t" '(org-todo :which-key "Todo"))
 #+end_src
 
-* Fragtog
+* LaTeX
+** Fragtog
 Org fragtog will render latex previews when the cursor is outside them. It will turn off the rendering when the cursor enters the block, allowing easier editing.
 #+begin_src emacs-lisp
   (use-package org-fragtog
