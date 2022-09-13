@@ -282,6 +282,12 @@ We also want to scale up latex renders to better match the font size
     (setq-plist-put org-format-latex-options :scale 1.5))
 #+end_src
 
+** Citations
+#+begin_src emacs-lisp
+  (use-package org-ref)  
+
+  (setq bibtex-completion-bibliography `(,(concat sync-dir "/Uni/Year 3/Project/bib/main.bib")))
+#+end_src
 * Export
 I don't want a html postamble
 #+begin_src emacs-lisp
