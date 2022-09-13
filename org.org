@@ -288,6 +288,14 @@ We also want to scale up latex renders to better match the font size
 
   (setq bibtex-completion-bibliography `(,(concat sync-dir "/Uni/Year 3/Project/bib/main.bib")))
 #+end_src
+
+** TODO Export
+I want to disable all the default packages for now. This will be changed later to include the right ones.
+#+begin_src emacs-lisp
+(setq org-latex-default-package-alist nil)
+#+end_src
+
+
 * Export
 I don't want a html postamble
 #+begin_src emacs-lisp
