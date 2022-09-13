@@ -263,6 +263,12 @@ So far I just have org capture bound outside of org mode itself, though I may ad
 #+end_src
 
 * LaTeX
+** Monospace Fonts
+I want latex blocks to be properly monospaced
+#+begin_src emacs-lisp
+(setq org-highlight-latex-and-related '(native))
+#+end_src
+
 ** Fragtog
 Org fragtog will render latex previews when the cursor is outside them. It will turn off the rendering when the cursor enters the block, allowing easier editing.
 #+begin_src emacs-lisp
