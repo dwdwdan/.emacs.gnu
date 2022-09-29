@@ -660,3 +660,25 @@ I don't want line numbers in pdf files, they're completely useless
   (mu4e t)
   (org-msg-mode)
 #+end_src
+
+* EAF
+#+begin_src emacs-lisp
+(use-package eaf
+    :straight (eaf
+               :type git
+               :host github
+               :repo "emacs-eaf/emacs-application-framework"
+               :files ("*.el" "*.py" "core" "app" "*.json")
+               :includes (eaf-pdf-viewer eaf-browser eaf-demo eaf-file-sender eaf-file-browser eaf-airshare eaf-camera) ; Straight won't try to search for these packages when we make further use-package invocations for them
+               :pre-build (("python" "install-eaf.py" "--install" "browser" "demo" "file-sender" "file-browser" "airshare" "camera"))
+               )
+    :init (evil-set-initial-state 'eaf-mode 'emacs)) ; Evil mode doesn't work well with eaf keybindings.
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package eaf-browser)
+  (use-package eaf-camera)
+  (use-package eaf-file-sender)
+  (use-package eaf-file-browser)
+  (use-package eaf-airshare)
+#+end_src
