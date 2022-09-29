@@ -271,6 +271,14 @@ I need to load languages for babel:
      (emacs-lisp . t)
      (python . t)))
 #+end_src
+
+I also don't want babel to ask me to confirm code execution
+#+begin_src emacs-lisp
+(setq org-confirm-babel-evaluate nil)
+#+end_src
+
+
+
 * LaTeX
 ** Monospace Fonts
 I want latex blocks to be properly monospaced
