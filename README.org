@@ -561,6 +561,12 @@ I don't want line numbers in pdf files, they're completely useless
   (setq reftex-plug-into-AUCTeX t)
 #+end_src
 
+** R
+#+begin_src emacs-lisp
+(use-package ess)
+#+end_src
+
+
 * Vterm
 [[https://github.com/akermu/emacs-libvterm][Vterm]] is my terminal emulator of choice for use inside of emacs
 #+begin_src emacs-lisp
