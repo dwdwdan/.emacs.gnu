@@ -262,6 +262,15 @@ So far I just have org capture bound outside of org mode itself, though I may ad
     "t" '(org-todo :which-key "Todo"))
 #+end_src
 
+* Babel
+I need to load languages for babel:
+#+begin_src emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((R . t)
+     (emacs-lisp . t)
+     (python . t)))
+#+end_src
 * LaTeX
 ** Monospace Fonts
 I want latex blocks to be properly monospaced
