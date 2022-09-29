@@ -292,7 +292,7 @@ We also want to scale up latex renders to better match the font size
 ** TODO Export
 I want to disable all the default packages for now. This will be changed later to include the right ones.
 #+begin_src emacs-lisp
-(setq org-latex-default-package-alist nil)
+(setq org-latex-default-packages-alist nil)
 #+end_src
 
 
