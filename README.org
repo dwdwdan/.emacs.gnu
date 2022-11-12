@@ -563,7 +563,9 @@ I don't want line numbers in pdf files, they're completely useless
 
 ** R
 #+begin_src emacs-lisp
-(use-package ess)
+  (use-package ess
+    :custom
+    (ess-indent-with-fancy-comments nil))
 #+end_src
 
 
