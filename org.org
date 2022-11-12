@@ -344,6 +344,18 @@ Finally I tell org mode to use minted for listings.
 #+end_src
 
 
+
+** Snippets
+I want yasnippet to also include all my LaTeX snippets in org mode
+#+begin_src emacs-lisp
+  (defun dan/add-latex-mode-yasnippet ()
+    (yas-minor-mode 1)
+    (yas-activate-extra-mode 'latex-mode))
+
+  (add-hook 'org-mode-hook #'dan/add-latex-mode-yasnippet)
+#+end_src
+
+
 * Export
 I don't want a html postamble
 #+begin_src emacs-lisp
