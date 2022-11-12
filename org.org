@@ -306,10 +306,41 @@ We also want to scale up latex renders to better match the font size
   (setq bibtex-completion-bibliography `(,(concat sync-dir "/Uni/Year 3/Project/bib/main.bib")))
 #+end_src
 
-** TODO Export
-I want to disable all the default packages for now. This will be changed later to include the right ones.
+** Export
+I sometimes write my university work in org mode, but my uni requires a pdf file compiled from \(\LaTeX\). Therefore, I need to configure latex export.
+
+First I want to remove hyperref from the default packages list, as I have a specific configuration inside my [[https:www.github.com/dwdwdan/latexTools][latexTools]] package.
 #+begin_src emacs-lisp
-(setq org-latex-default-packages-alist nil)
+  (setq org-latex-default-packages-alist
+        '(("AUTO" "inputenc" t
+          ("pdflatex"))
+         ("T1" "fontenc" t
+          ("pdflatex"))
+         ("" "graphicx" t)
+         ("" "longtable" nil)
+         ("" "wrapfig" nil)
+         ("" "rotating" nil)
+         ("normalem" "ulem" t)
+         ("" "amsmath" t)
+         ("" "amssymb" t)
+         ("" "capt-of" nil)))
+#+end_src
+
+Then I need to add the latextools and minted packages. Minted is used to make src blocks export neatly.
+#+begin_src emacs-lisp
+  (setq org-latex-packages-alist
+        '(("" "latextools" t)
+        ("" "minted" nil)))
+#+end_src
+
+For Minted to work, I need to add the ~-shell-escape~ parameter to latexmk
+#+begin_src emacs-lisp
+(setq org-latex-pdf-process '("latexmk -f -pdf -%latex -interaction=nonstopmode -shell-escape -output-directory=%o %f"))
+#+end_src
+
+Finally I tell org mode to use minted for listings.
+#+begin_src emacs-lisp
+(setq org-latex-listings 'minted)
 #+end_src
 
 
