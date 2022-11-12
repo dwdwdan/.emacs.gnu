@@ -684,3 +684,12 @@ I don't want line numbers in pdf files, they're completely useless
   (use-package eaf-file-browser)
   (use-package eaf-airshare)
 #+end_src
+
+* Notify at end of loading
+#+begin_src emacs-lisp
+  (require 'notifications)
+  (notifications-notify
+   :title "Emacs Config Loaded"
+   :body "Press Super+e to Open")
+#+end_src
+
