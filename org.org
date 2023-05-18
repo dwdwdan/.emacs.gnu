@@ -413,6 +413,11 @@ If invoked using a prefix argument or with SHOULD-OPEN-IN-BROWSER non-nil it wil
   Address has been copied to clipboard.")))
 #+end_src
 
+I want to be able to bind variables in an org file
+#+begin_src emacs-lisp
+(setq org-export-allow-bind-keywords t)
+#+end_src
+
 * Htmlize
 Htmlize seems to be a depency to export to html properly.
 #+begin_src emacs-lisp
