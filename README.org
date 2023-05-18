@@ -581,19 +581,25 @@ I don't want line numbers in pdf files, they're completely useless
 * Elfeed
 [[https://github.com/skeeto/elfeed][Elfeed]] is a package for reading RSS feeds. I currently use the default config but I may change some things later
 #+begin_src emacs-lisp
-  (use-package elfeed
-    :general
-    (dan/leader
-      "o r" '(elfeed :which-key "RSS reader"))
-    :hook
-    ;; Don't display line numbers when reading an RSS document
-    (elfeed-show-mode . (lambda () (display-line-numbers-mode -1)))
-    ;; Automatically update RSS feeds every 10 minutes
-    (emacs-startup . (lambda () (run-at-time 5 600 'elfeed-update)))
-    :custom
-    (elfeed-feeds
-     '(("https://dansdinners.xyz/feed.xml" mine)
-       ("https://planet.emacslife.com/atom.xml" emacs))))
+          (use-package elfeed
+            :general
+            (dan/leader
+              "o r" '(elfeed :which-key "RSS reader"))
+            :hook
+            ;; Don't display line numbers when reading an RSS document
+            (elfeed-show-mode . (lambda () (display-line-numbers-mode -1)))
+            ;; Automatically update RSS feeds every 10 minutes
+            (emacs-startup . (lambda () (run-at-time 5 600 'elfeed-update)))
+            :custom
+            (elfeed-use-curl t)
+            (elfeed-curl-extra-arguments '("--insecure")))
+
+          (use-package elfeed-protocol)
+
+    (setq elfeed-feeds
+    '(("owncloud+https://dan@nextcloud.dwdwdan.xyz" :use-authinfo t)))
+    (setq elfeed-protocol-enabled-protocols '(owncloud))
+    (elfeed-protocol-enable)
 #+end_src
 
 * Mu4e
