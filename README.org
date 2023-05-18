@@ -561,6 +561,12 @@ I don't want line numbers in pdf files, they're completely useless
   (setq reftex-plug-into-AUCTeX t)
 #+end_src
 
+My University uses the harvard style, so I need reftex to give me the choice of styles
+#+begin_src emacs-lisp
+(setq reftex-cite-format 'biblatex)
+#+end_src
+
+
 ** R
 #+begin_src emacs-lisp
   (use-package ess
