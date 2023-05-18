@@ -675,6 +675,44 @@ My University uses the harvard style, so I need reftex to give me the choice of 
   (org-msg-mode)
 #+end_src
 
+* Ement (Matrix)
+#+begin_src emacs-lisp
+    (use-package ement
+      :straight '(:type git :host github :repo "alphapapa/ement.el")
+
+      :custom
+      (ement-save-sessions t)
+
+      :hook
+      ;; Don't display line numbers when reading an RSS document
+      (ement-room-mode . (lambda () (display-line-numbers-mode -1)))
+
+      :general
+      (dan/leader
+        "o M" '(ement-room-list :which-key "Matrix"))
+
+      (general-define-key
+       :states '(normal)
+       :keymaps 'ement-room-mode-map
+       "?" '(ement-room-transient :which-key "Help")
+       "RET" '(ement-room-send-message :which-key "Compose")
+       "S-RET" '(ement-room-write-reply :which-key "Reply"))
+
+      (dan/local-leader
+        :keymaps '(ement-room-mode-map ement-room-list-mode-map)
+        "l" '(ement-room-list :which-key "Go to Room List")
+  "n" '(ement-notify-switch-to-notifications-buffer :which-key "Go to Notification"))
+
+
+      (general-define-key
+       :states '(normal)
+       :keymaps 'ement-room-list-mode-map
+       "RET" '(ement-room-list-RET :which-key "View Room")
+       "S-SPC" '(ement-room-list-next-unread :which-key "Next Unread"))
+      )
+#+end_src
+
+
 * EAF
 #+begin_src emacs-lisp
 (use-package eaf
