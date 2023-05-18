@@ -343,7 +343,9 @@ Finally I tell org mode to use minted for listings.
 (setq org-latex-listings 'minted)
 #+end_src
 
-
+#+begin_src emacs-lisp
+(setq org-latex-minted-options '(("breaklines" "true")))
+#+end_src
 
 ** Snippets
 I want yasnippet to also include all my LaTeX snippets in org mode
