@@ -230,6 +230,7 @@ As I'm a filthy vim user at heart, I have to install evil to make emacs remotely
     :init
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
+  (setq evil-respect-visual-line-mode t)
     :config
     (evil-mode 1)
     (if (>= emacs-major-version 28)
