@@ -250,6 +250,7 @@ General is the package I use to set keybindings. I use the ~:keymaps 'override~ 
 #+begin_src emacs-lisp
   (use-package general
     :config
+    (general-auto-unbind-keys)
     (general-create-definer dan/leader
       :states '(normal insert visual emacs)
       :keymaps 'override
