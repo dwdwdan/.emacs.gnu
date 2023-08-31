@@ -364,6 +364,30 @@ I want yasnippet to also include all my LaTeX snippets in org mode
   (add-hook 'org-mode-hook #'dan/add-latex-mode-yasnippet)
 #+end_src
 
+* Org Noter
+Org Noter allows you to easily make notes on a pdf file, saving them into an org file. I am planning to use this to make notes on any sources I use for research projects.
+#+begin_src emacs-lisp
+  (use-package org-noter)
+  (setq org-noter-notes-search-path '("~/Nextcloud/University/Project/bib"))
+  (setq org-noter-always-create-frame nil)
+
+  (dan/local-leader
+    :keymaps 'pdf-view-mode-map
+    "n" '(org-noter :which-key "Launch Org Noter")
+    :keymaps 'org-noter-doc-mode-map
+    "i" '(org-noter-insert-note :which-key "Insert Note")
+    "I" '(org-noter-insert-precise-note :which-key "Insert Precise Note")
+    "j" '(org-noter-sync-next-note :which-key "Next Note")
+    "k" '(org-noter-sync-prev-note :which-key "Previous Note")
+    "q" '(org-noter-kill-session :which-key "Quit Org Noter")
+  :keymaps 'org-noter-notes-mode-map
+    "n i" '(org-noter-insert-note :which-key "Insert Note")
+    "n I" '(org-noter-insert-precise-note :which-key "Insert Precise Note")
+    "n j" '(org-noter-sync-next-note :which-key "Next Note")
+    "n k" '(org-noter-sync-prev-note :which-key "Previous Note")
+    "n q" '(org-noter-kill-session :which-key "Quit Org Noter"))
+#+end_src
+
 
 * Export
 I don't want a html postamble
