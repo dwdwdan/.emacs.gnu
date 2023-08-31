@@ -575,6 +575,14 @@ My University uses the harvard style, so I need reftex to give me the choice of 
 (setq reftex-cite-format 'biblatex)
 #+end_src
 
+I also need a binding for reftex
+#+begin_src emacs-lisp
+    (dan/local-leader
+  :keymap latex-mode-map
+    "r" '(reftex-citation :which-key "Cite with RefTeX"))
+#+end_src
+
+
 
 ** R
 #+begin_src emacs-lisp
