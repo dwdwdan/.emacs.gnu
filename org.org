@@ -226,6 +226,13 @@ I don't like to see the emphasis markers (~~~, ~*~ etc) so we get org to hide th
 (setq org-hide-emphasis-markers t)
 #+end_src
 
+** Inline Images
+I want inline images to always appear a fixed size so they aren't too big or small
+#+begin_src emacs-lisp
+(setq org-image-actual-width 400)
+#+end_src
+
+
 ** Startup
 When I open an org mode buffer, I want latex previews and inline images. I also want to start with org folded
 #+begin_src emacs-lisp
