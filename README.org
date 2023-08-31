@@ -556,6 +556,13 @@ I don't want line numbers in pdf files, they're completely useless
     (LaTeX-mode . TeX-source-correlate-mode))
 #+end_src
 
+#+begin_src emacs-lisp
+    (dan/local-leader
+  :keymap latex-mode-map
+  "c" '(compile :which-key "Compile"))
+#+end_src
+
+
 
 *** Reftex
 #+begin_src emacs-lisp
