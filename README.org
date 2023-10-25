@@ -559,8 +559,8 @@ I don't want line numbers in pdf files, they're completely useless
 
 #+begin_src emacs-lisp
     (dan/local-leader
-  :keymap latex-mode-map
-  "c" '(compile :which-key "Compile"))
+ :keymap TeX-mode-map
+ "c" '(compile :which-key "Compile"))
 #+end_src
 
 
@@ -578,9 +578,9 @@ My University uses the harvard style, so I need reftex to give me the choice of 
 
 I also need a binding for reftex
 #+begin_src emacs-lisp
-    (dan/local-leader
-  :keymap latex-mode-map
-    "r" '(reftex-citation :which-key "Cite with RefTeX"))
+     (dan/local-leader
+   :keymap TeX-mode-map
+     "r" '(reftex-citation :which-key "Cite with RefTeX"))
 #+end_src
 
 
